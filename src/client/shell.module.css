@@ -1,0 +1,140 @@
+.wordmark {
+  display: inline-block;
+  color: var(--claude-ink, var(--dsw-alias-label-primary));
+  font-family: var(--claude-font-brand, 'Lora', Georgia, serif);
+  font-size: 33px;
+  font-weight: 500;
+  line-height: 40px;
+  letter-spacing: -1.5px;
+}
+
+.welcome {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+  padding: 0;
+  color: var(--claude-ink, var(--dsw-alias-label-primary));
+}
+
+.welcomeTitle {
+  max-width: 100%;
+  margin: 0;
+  font-family: var(--claude-font-heading, Georgia, serif);
+  font-size: clamp(26px, 2.6vw, 32px);
+  font-weight: 400;
+  line-height: 1.35;
+  text-align: center;
+  overflow-wrap: anywhere;
+  letter-spacing: -0.7px;
+}
+
+.welcomeHint {
+  margin: -4px 0 0;
+  color: var(--claude-accent, var(--dsw-alias-label-secondary));
+  font-family: var(--dsw-font-family, inherit);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 21px;
+  letter-spacing: 0.6px;
+  text-align: center;
+}
+
+.suggestionMount {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 12px var(--dsh-composer-side-clearance, 16px) 0;
+  color: var(--claude-ink, var(--dsw-alias-label-primary));
+  font-family: var(--dsw-font-family, inherit);
+}
+
+.suggestions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+  width: 100%;
+}
+
+.suggestion {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr);
+  align-content: start;
+  gap: 6px 8px;
+  min-height: 60px;
+  padding: 12px 8px;
+  border: 0;
+  border-bottom: 0.5px solid var(--claude-border, var(--dsw-alias-border-l3));
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.suggestion:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.suggestion:focus-visible {
+  outline: var(--dsw-focus-ring-width, 2px) solid var(--dsw-focus-ring-color, currentColor);
+  outline-offset: 2px;
+}
+
+.suggestion:last-child {
+  border-bottom: 0;
+}
+
+.suggestionGlyph {
+  grid-row: 1 / span 2;
+  color: var(--claude-muted, var(--dsw-alias-label-secondary));
+  font-size: 20px;
+  line-height: 20px;
+}
+
+.suggestionTitle {
+  min-width: 0;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 18px;
+}
+
+.suggestionHint {
+  color: var(--claude-muted, var(--dsw-alias-label-secondary));
+  font-size: 11px;
+  line-height: 17px;
+}
+
+.draftNotice {
+  margin-top: 8px;
+  color: var(--claude-muted, var(--dsw-alias-label-secondary));
+  font-size: 11px;
+  line-height: 17px;
+}
+
+@media (hover: hover) {
+  .suggestion:not(:disabled):hover {
+    background: var(--claude-surface-muted, var(--dsw-alias-interactive-bg-hover));
+  }
+}
+
+@media (max-width: 760px) {
+  .welcome {
+    gap: 12px;
+  }
+
+  .suggestions {
+    gap: 0;
+  }
+
+  .suggestion {
+    min-height: 58px;
+    padding: 10px 8px;
+  }
+
+  .suggestionHint {
+    display: block;
+  }
+}

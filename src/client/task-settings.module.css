@@ -1,0 +1,32 @@
+.anchor {
+  margin-left: auto;
+}
+
+.trigger[data-dsh-claude-task-settings] {
+  min-height: 28px;
+  padding: 0 8px;
+  color: var(--claude-secondary, var(--dsw-alias-label-secondary));
+  font-size: 12px;
+  font-weight: 400;
+}
+
+/* React still owns the original name; our accessible label includes its live value. */
+.trigger > :not([data-dsh-claude-task-content]) {
+  display: none;
+}
+
+.content {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.content svg {
+  flex: none;
+}
+
+.trigger:focus-visible {
+  outline: var(--dsw-focus-ring-width, 2px) solid var(--dsw-focus-ring-color, currentColor);
+  outline-offset: 2px;
+}

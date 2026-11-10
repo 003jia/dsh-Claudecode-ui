@@ -1,0 +1,61 @@
+.mount {
+  flex: none;
+  /* SidebarRoot already supplies 8px on each side. Add only the remaining
+     8px so this stays aligned at the native, user-resizable sidebar width. */
+  width: calc(100% - 16px);
+  margin: 6px auto 10px;
+  -webkit-app-region: no-drag;
+}
+.mount[hidden] { display: none; }
+.anchor { display: block; width: 100%; }
+.trigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 34px;
+  padding: 7px 10px;
+  border: 1px solid var(--claude-menu-border);
+  border-radius: 7px;
+  background: var(--claude-surface);
+  color: var(--claude-secondary);
+  font-family: var(--dsw-font-family);
+  font-size: 12px;
+  line-height: 18px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.trigger > svg { flex: none; color: var(--claude-accent); }
+.triggerLabel { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.chevron { display: flex; margin-left: auto; color: var(--claude-muted); }
+.chevron[data-open='true'] { transform: rotate(180deg); }
+.trigger:disabled { opacity: 0.65; cursor: default; }
+.trigger:focus-visible { outline: var(--dsw-focus-ring-width, 2px) solid var(--dsw-focus-ring-color); outline-offset: 2px; }
+:global(html[data-dsh-claude-ui]) .menu {
+  --dsw-menu-surface-fill: var(--claude-surface);
+  box-sizing: border-box;
+  /* Native Menu supplies the measured anchor width, including sidebar resize. */
+  width: 180px;
+  max-width: calc(100vw - 24px);
+  padding: 5px;
+  border-radius: 8px;
+  border: 1px solid var(--claude-menu-border);
+  background: var(--claude-surface);
+  box-shadow: 0 7px 22px var(--claude-menu-shadow);
+  color: var(--claude-secondary);
+}
+.title { padding: 5px 8px; font-size: 10px; line-height: 15px; color: var(--claude-muted); }
+.option { margin-top: 1px; border-radius: 5px; }
+.option[data-selected='true'] { background: var(--claude-menu-selected); }
+:global(html[data-dsh-claude-ui]) .menu .option [role='menuitem'], :global(html[data-dsh-claude-ui]) .menu .custom [role='menuitem'] { width: 100%; min-height: 32px; padding: 7px 8px; border-radius: 5px; }
+.optionContent { display: flex; align-items: center; gap: 8px; width: 100%; min-width: 0; }
+.optionContent > svg { flex: none; color: var(--claude-accent); }
+.copy { display: flex; flex: 1; min-width: 0; flex-direction: column; gap: 2px; }
+.name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; line-height: 18px; font-weight: 400; }
+.hint { color: var(--claude-muted); font-size: 10px; line-height: 15px; white-space: normal; }
+.separator { margin: 4px 0; height: 1px; background: var(--claude-border); }
+.custom { color: var(--claude-accent); font-size: 12px; }
+.custom [role='menuitem'] { color: var(--claude-accent); font-size: 12px; }
+.notice { display: block; padding: 4px 2px 0; font-size: 11px; line-height: 16px; color: var(--claude-muted); }
+.explanation { padding: 5px 8px; color: var(--claude-muted); font-size: 11px; line-height: 16px; overflow-wrap: anywhere; }

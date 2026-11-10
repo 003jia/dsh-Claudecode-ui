@@ -1,0 +1,740 @@
+/* This opt-in theme changes presentation, while native DSH owns all regions,
+   controls, state, overlay behavior, and extension outlets. */
+html[data-dsh-claude-ui],
+html[data-dsh-claude-ui] body {
+  --claude-canvas: #f7f6f2;
+  --claude-sidebar: #efede7;
+  --claude-surface: #fffefa;
+  --claude-surface-muted: #f0eee8;
+  --claude-surface-raised: #ffffff;
+  --claude-ink: #292722;
+  --claude-secondary: #5f5b54;
+  --claude-muted: #716b62;
+  --claude-border: #dedad2;
+  --claude-border-strong: #c9c3b8;
+  --claude-accent: #a2674d;
+  --claude-accent-hover: #88533c;
+  --claude-on-accent: #ffffff;
+  --claude-selection: #e6e1d7;
+  --claude-hover: rgba(74, 61, 45, 0.06);
+  --claude-accent-soft: #efe1d8;
+  --claude-shadow-color: rgba(49, 38, 24, 0.07);
+  --claude-menu-border: #d9d4c9;
+  --claude-menu-selected: #efeADF;
+  --claude-menu-shadow: #382d2026;
+  --claude-font-ui: 'Inter', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --claude-font-heading: 'Noto Serif SC', 'Songti SC', 'STSong', Georgia, serif;
+  --claude-font-brand: 'Lora', Georgia, 'Times New Roman', serif;
+  --claude-font-code: 'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace;
+  --claude-content-width: 820px;
+
+  --dsw-alias-bg-base: var(--claude-canvas);
+  --dsw-alias-bg-sidebar: var(--claude-sidebar);
+  --dsw-alias-bg-layer-1: var(--claude-surface-raised);
+  --dsw-alias-bg-layer-2: var(--claude-surface);
+  --dsw-alias-bg-layer-3: var(--claude-surface-muted);
+  --dsw-alias-bg-module-platform: var(--claude-surface-muted);
+  --dsw-alias-bg-multi-select: var(--claude-selection);
+  --dsw-alias-bg-skeleton: var(--claude-hover);
+  --dsw-alias-border-l1: color-mix(in srgb, var(--claude-border) 60%, transparent);
+  --dsw-alias-border-l2: var(--claude-border);
+  --dsw-alias-border-l3: var(--claude-border);
+  --dsw-alias-border-l4: var(--claude-border-strong);
+  --dsw-alias-border-l2-darkmode-thin: var(--claude-border);
+  --dsw-alias-label-primary: var(--claude-ink);
+  --dsw-alias-label-primary-dimmed: var(--claude-ink);
+  --dsw-alias-label-primary-bluish: var(--claude-accent);
+  --dsw-alias-label-primary-foreground: var(--claude-on-accent);
+  --dsw-alias-label-primary-inverted: var(--claude-surface);
+  --dsw-alias-label-secondary: var(--claude-secondary);
+  --dsw-alias-label-tertiary: var(--claude-muted);
+  --dsw-alias-label-caption: var(--claude-muted);
+  --dsw-alias-menu-icon: var(--claude-secondary);
+  --dsw-alias-link: var(--claude-accent);
+  --dsw-alias-brand-primary: var(--claude-accent);
+  --dsw-alias-brand-primary-invert: var(--claude-on-accent);
+  --dsw-alias-brand-text: var(--claude-accent);
+  --dsw-alias-button-primary-fill: var(--claude-accent);
+  --dsw-alias-button-primary-hover: var(--claude-accent-hover);
+  --dsw-alias-button-primary-dimmed: var(--claude-selection);
+  --dsw-alias-button-elevated-fill: var(--claude-surface-raised);
+  --dsw-alias-button-floating-fill: var(--claude-surface-raised);
+  --dsw-alias-button-floating-hover: var(--claude-surface-muted);
+  --dsw-alias-button-ghost-active-fill: var(--claude-selection);
+  --dsw-alias-button-ghost-active-hover: var(--claude-hover);
+  --dsw-alias-button-ghost-active-border: var(--claude-border-strong);
+  --dsw-alias-interactive-bg-hover: var(--claude-hover);
+  --dsw-alias-interactive-bg-hover-solid: var(--claude-surface-muted);
+  --dsw-alias-interactive-bg-hover-accent: var(--claude-accent-soft);
+  --dsw-alias-interactive-bg-active: var(--claude-selection);
+  --dsw-alias-settings-card-fill: var(--claude-surface-raised);
+  --dsw-alias-settings-card-stroke: var(--claude-border);
+  --dsw-alias-markdown-code-block: var(--claude-surface-muted);
+  --dsw-alias-markdown-code-block-banner: var(--claude-surface-muted);
+  --dsw-alias-markdown-inline-code: var(--claude-surface-muted);
+  --dsw-alias-markdown-tag: var(--claude-surface-muted);
+  --dsw-alias-scrollbar-bg-l1: var(--claude-border);
+  --dsw-alias-scrollbar-bg-l2: var(--claude-border);
+  --dsw-alias-scrollbar-hover-l1: var(--claude-border-strong);
+  --dsw-alias-scrollbar-hover-l2: var(--claude-border-strong);
+  --dsw-specific-sidebar-fill: var(--claude-sidebar);
+  --dsw-specific-sidebar-nav-item-active: var(--claude-selection);
+  --dsw-specific-sidebar-nav-item-active-accent: var(--claude-accent-soft);
+  --dsw-specific-input-major: var(--claude-surface-raised);
+  --dsw-specific-login-input: var(--claude-surface-muted);
+  --dsw-specific-selector: var(--claude-surface-muted);
+  --dsw-specific-tip: var(--claude-surface-muted);
+  --dsw-specific-bubble: var(--claude-surface-muted);
+  --dsw-specific-bubble-highlight: var(--claude-accent-soft);
+  --dsw-font-family: var(--dsh-font-family-text, var(--claude-font-ui)), var(--claude-font-ui);
+  --dsw-font-family-brand: var(--claude-font-brand);
+  --ds-font-family-code: var(--dsh-font-family-code, var(--claude-font-code)), var(--claude-font-code);
+  --dsw-focus-ring-color: var(--claude-accent);
+  --dsw-radius-sm: 8px;
+  --dsw-radius-md: 10px;
+  --dsw-radius-lg: 14px;
+  --dsw-radius-xl: 18px;
+  --dsw-radius-panel: 20px;
+}
+
+/* The host publishes its real dark mode on body. Mirror that marker without
+   introducing a second theme preference or changing the host's color-scheme. */
+html[data-dsh-claude-ui]:has(body[data-ds-dark-theme]),
+html[data-dsh-claude-ui] body[data-ds-dark-theme] {
+  --claude-menu-border: var(--claude-border);
+  --claude-menu-selected: var(--claude-selection);
+  --claude-menu-shadow: rgba(0, 0, 0, 0.3);
+  --claude-canvas: #24231f;
+  --claude-sidebar: #1e1d19;
+  --claude-surface: #292722;
+  --claude-surface-muted: #302d27;
+  --claude-surface-raised: #302e29;
+  --claude-ink: #eeeae2;
+  --claude-secondary: #ccc4b8;
+  --claude-muted: #afa697;
+  --claude-border: #49443b;
+  --claude-border-strong: #655e51;
+  --claude-accent: #d7a181;
+  --claude-accent-hover: #e4b293;
+  --claude-on-accent: #29221c;
+  --claude-selection: #3d382f;
+  --claude-hover: rgba(230, 216, 195, 0.07);
+  --claude-accent-soft: #48372d;
+  --claude-shadow-color: rgba(0, 0, 0, 0.2);
+}
+
+html[data-dsh-claude-ui] {
+  background: var(--claude-canvas);
+}
+
+html[data-dsh-claude-ui] body {
+  background: var(--claude-canvas);
+  color: var(--claude-ink);
+  font-family: var(--dsw-font-family);
+}
+
+/* Native frame dimensions, resize handles, and collapse rules remain owned
+   by ui-layout. Painting the slot occupant also covers macOS vibrancy. */
+html[data-dsh-claude-ui] [data-slot='sidebar'] > div {
+  background: var(--claude-sidebar);
+}
+
+/* This direct child is the native New Session control, identified in the
+   current SidebarRoot contract. The mode controls above it stay in normal
+   document flow, so visual order and keyboard order agree. */
+html[data-dsh-claude-ui] [data-dsh-claude-sidebar-wide] > button {
+  justify-content: flex-start;
+  height: 36px;
+  margin: 0 0 6px;
+  padding: 7px 12px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  box-shadow: none;
+  color: var(--claude-ink);
+  font-size: 13px;
+  line-height: 22px;
+  font-weight: 400;
+}
+
+html[data-dsh-claude-ui] [data-dsh-claude-sidebar-wide] > button > span:first-child > span {
+  width: auto;
+  justify-content: flex-start;
+  gap: 9px;
+}
+
+@media (hover: hover) {
+  html[data-dsh-claude-ui] [data-dsh-claude-sidebar-wide] > button:hover {
+    background: var(--claude-hover);
+  }
+}
+
+html[data-dsh-claude-ui] [data-slot='sidebar.brand.name'] {
+  color: var(--claude-ink);
+  font-family: var(--claude-font-brand);
+  font-size: 25px;
+  line-height: 32px;
+  font-weight: 500;
+  letter-spacing: -0.6px;
+}
+
+/* The presenter marks only the native container occupied by our empty
+   glyph. If another contribution replaces it, :has stops matching. */
+html[data-dsh-claude-ui] [data-dsh-claude-sidebar-mark-seat]:has([data-dsh-claude-empty-mark]) {
+  display: none;
+}
+
+html[data-dsh-claude-ui] [data-slot='sidebar'] [data-row-key^='session:'][aria-selected='true'],
+html[data-dsh-claude-ui] [data-slot='sidebar'] [data-row-key^='workspace:'][aria-selected='true'] {
+  background: var(--claude-selection);
+}
+
+html[data-dsh-claude-ui] [data-conversation-content] {
+  --dsh-chat-content-width: min(calc(100% - 48px), var(--dsh-chat-user-width, var(--claude-content-width)));
+  --dsh-composer-card-max-width: calc(var(--dsh-chat-content-width) + 24px);
+  --dsh-composer-side-clearance: 20px;
+  --dsh-composer-dock-inset: 8px;
+}
+
+html[data-dsh-claude-ui][data-dsh-claude-width='narrow'] [data-conversation-content] {
+  --claude-content-width: 680px;
+}
+
+html[data-dsh-claude-ui][data-dsh-claude-width='wide'] [data-conversation-content] {
+  --claude-content-width: 1040px;
+}
+
+html[data-dsh-claude-ui] [data-composer-card] {
+  border: 0;
+  border-radius: 18px;
+  background: var(--claude-surface-raised);
+  --dsw-elevation-stroke-color: var(--claude-border);
+  box-shadow: 0 0 0 0.5px var(--dsw-elevation-stroke-color), 0 5px 18px var(--claude-shadow-color);
+  padding-top: 14px;
+  gap: 12px;
+}
+
+html[data-dsh-claude-ui] [data-composer-input] {
+  min-height: 44px;
+  font-family: var(--dsw-font-family);
+  line-height: 24px;
+}
+
+html[data-dsh-claude-ui] [data-composer-placeholder] {
+  color: var(--claude-muted);
+}
+
+html[data-dsh-claude-ui] [data-composer-dock] {
+  flex-wrap: wrap;
+  row-gap: 6px;
+}
+
+html[data-dsh-claude-ui] [data-composer-dock]:has([data-dsh-claude-context-meter]) {
+  position: relative;
+  box-sizing: border-box;
+  width: min(100%, var(--dsh-composer-card-max-width));
+  min-height: 28px;
+  padding-inline: 30px;
+}
+
+/* The native meter remains the fallback where the session slot is absent. */
+html[data-dsh-claude-ui] [data-composer-dock]:has([data-dsh-claude-context-meter]) > span:has(> button[aria-haspopup='dialog'] > svg[viewBox='0 0 14 14'] > circle + circle) {
+  display: none;
+}
+
+/* The optional context-compact plugin pairs its meter with a separate action. */
+html[data-dsh-claude-ui] [data-composer-dock]:has([data-dsh-claude-context-meter]) [data-slot='conversation.composer.dock'] button[class$='_meter'][aria-haspopup='dialog']:has(> svg[viewBox='0 0 14 14'] > circle + circle) {
+  display: none;
+}
+
+html[data-dsh-claude-ui] [data-composer-dock]:has([data-dsh-claude-context-meter]) [data-slot='conversation.composer.dock'] button[class$='_meter'][aria-haspopup='dialog']:has(> svg[viewBox='0 0 14 14'] > circle + circle) + button[class$='_action'] {
+  border-inline-start: 0;
+}
+
+/* Only hide the original pair when the replacement can also run compaction. */
+html[data-dsh-claude-ui] [data-composer-dock]:has([data-dsh-claude-context-compact]) [data-slot='conversation.composer.dock'] span[class$='_group']:has(> button[class$='_meter'][aria-haspopup='dialog'] + button[class$='_action']) {
+  display: none;
+}
+
+/* These markers are placed only on confirmed native welcome-text nodes by
+   the shell presenter. No generic header, tab, or plugin outlet is hidden. */
+html[data-dsh-claude-ui] [data-dsh-claude-headline] {
+  padding: 0 0 16px;
+  color: var(--claude-ink);
+  font-family: var(--claude-font-heading);
+  font-size: clamp(27px, 3.1vw, 36px);
+  line-height: 1.5;
+  font-weight: 400;
+  letter-spacing: -0.8px;
+}
+
+html[data-dsh-claude-ui] [data-dsh-claude-brand-seat] {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  min-width: 0;
+}
+
+html[data-dsh-claude-ui] [data-dsh-claude-native-title] {
+  display: none;
+}
+
+html[data-dsh-claude-ui] [data-dsh-claude-workspace-row] {
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  width: var(--dsh-chat-content-width);
+  max-width: calc(100% - 24px);
+  align-self: center;
+  box-sizing: border-box;
+  padding-inline: 0;
+}
+
+html[data-dsh-claude-ui] [data-dsh-claude-options] {
+  flex: 0 1 auto;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  min-width: 0;
+  max-width: 100%;
+  margin: 0;
+}
+
+/* Project selection lives in the native sidebar. Keep its original anchor
+   available when the empty composer needs to open the workspace picker. */
+html[data-dsh-claude-ui]:has([data-slot='sidebar.workspaces'] [role='tree'])
+  [data-dsh-claude-hero-stack]:not(:has([data-composer-input][aria-haspopup='menu']))
+  [data-dsh-claude-project-picker] {
+  display: none;
+}
+
+/* With projects in the sidebar, the welcome and composer form one compact
+   group. Keep the host's intrinsic, scrollable hero flow in both modes;
+   stretching the old environment-card seat leaves an empty full-height gap. */
+html[data-dsh-claude-ui] [data-dsh-claude-hero-welcome] {
+  height: auto;
+}
+
+/* The settings dialog keeps all four native grid seats, its modal focus
+   manager, scrollports, page actions, close control, and dynamic sections. */
+html[data-dsh-claude-ui] [data-shortcut-modal='settings'] {
+  width: min(1320px, calc(100vw - 64px));
+  height: min(824px, calc(100dvh - 64px));
+  max-width: calc(100vw - 64px);
+  grid-template-columns: 240px minmax(0, 1fr);
+  grid-template-rows: 76px minmax(0, 1fr);
+  border-radius: 20px;
+  background: var(--claude-canvas);
+}
+
+html[data-dsh-claude-ui] [data-shortcut-modal='settings'] > div[tabindex='-1'] {
+  padding: 28px 28px 12px;
+  background: var(--claude-sidebar);
+  font-size: 17px;
+  line-height: 26px;
+  font-weight: 500;
+}
+
+html[data-dsh-claude-ui] [data-shortcut-modal='settings'] > nav {
+  padding: 4px 16px 20px;
+  background: var(--claude-sidebar);
+}
+
+html[data-dsh-claude-ui] [data-shortcut-modal='settings'] > nav > div > button {
+  min-height: 40px;
+  flex: none;
+  padding: 9px 14px;
+  border-radius: 9px;
+  color: var(--claude-secondary);
+  font-family: var(--dsw-font-family);
+  font-size: 13px;
+  line-height: 22px;
+}
+
+html[data-dsh-claude-ui] [data-shortcut-modal='settings'] > nav > div > button[aria-current='true'] {
+  background: var(--claude-selection);
+  color: var(--claude-ink);
+  font-weight: 500;
+}
+
+html[data-dsh-claude-ui] [data-shortcut-modal='settings'] > div:has(> div > [data-slot='settings.action']) {
+  height: 76px;
+  padding: 24px 28px 12px;
+}
+
+html[data-dsh-claude-ui] [data-shortcut-modal='settings'] > div:has(> [data-slot='settings.section']) {
+  padding: 4px 40px 32px;
+}
+
+html[data-dsh-claude-ui] [data-shortcut-modal='settings'] [data-slot='settings.section'] > :first-child {
+  width: 100%;
+  max-width: 900px;
+  margin-inline: auto;
+}
+
+@media (max-width: 1000px) {
+  html[data-dsh-claude-ui] [data-shortcut-modal='settings'] {
+    width: calc(100vw - 32px);
+    max-width: calc(100vw - 32px);
+    height: calc(100dvh - 32px);
+    grid-template-columns: 200px minmax(0, 1fr);
+  }
+
+  html[data-dsh-claude-ui] [data-shortcut-modal='settings'] > div:has(> [data-slot='settings.section']) {
+    padding-inline: 24px;
+  }
+}
+
+@media (max-width: 767px) {
+  html[data-dsh-claude-ui] [data-conversation-content] {
+    --dsh-chat-content-width: min(calc(100% - 32px), var(--dsh-chat-user-width, var(--claude-content-width)));
+    --dsh-composer-card-max-width: calc(var(--dsh-chat-content-width) + 8px);
+    --dsh-composer-side-clearance: 12px;
+  }
+
+  html[data-dsh-claude-ui] [data-dsh-claude-headline] {
+    padding-bottom: 16px;
+    font-size: 27px;
+    letter-spacing: -0.4px;
+  }
+
+  html[data-dsh-claude-ui] [data-shortcut-modal='settings'] {
+    width: calc(100vw - 16px);
+    max-width: calc(100vw - 16px);
+    height: calc(100dvh - 16px);
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto auto minmax(0, 1fr);
+    grid-template-areas: 'title header' 'nav nav' 'options options';
+    border-radius: 14px;
+  }
+
+  html[data-dsh-claude-ui] [data-shortcut-modal='settings'] > div[tabindex='-1'] {
+    padding: 20px 20px 12px;
+    background: var(--claude-canvas);
+  }
+
+  html[data-dsh-claude-ui] [data-shortcut-modal='settings'] > nav {
+    padding: 0 16px 12px;
+    background: var(--claude-canvas);
+  }
+
+  html[data-dsh-claude-ui] [data-shortcut-modal='settings'] > nav > div {
+    flex-direction: row;
+    gap: 4px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 0;
+  }
+
+  html[data-dsh-claude-ui] [data-shortcut-modal='settings'] > nav > div > button {
+    min-width: max-content;
+  }
+
+  html[data-dsh-claude-ui] [data-shortcut-modal='settings'] > div:has(> div > [data-slot='settings.action']) {
+    height: auto;
+    padding: 18px 16px 10px;
+  }
+
+  html[data-dsh-claude-ui] [data-shortcut-modal='settings'] > div:has(> [data-slot='settings.section']) {
+    padding: 4px 20px 24px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-dsh-claude-ui] [data-dsh-claude-welcome] {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* Code running, approval, and delivery use the native chat surfaces. */
+@media (min-width: 1120px) {
+  html[data-dsh-claude-ui] [data-claude-details-track]:has(> [data-rightbar-col] [data-sidebar-right-panel='push'][data-sidebar-right-open] [data-dockkit-host='dock'] [data-claude-session-details]):not(:has(> [data-rightbar-col] [data-sidebar-right-open] [data-dockkit-split])) {
+    grid-template-columns: var(--claude-details-left) minmax(0, 1fr) 312px !important;
+  }
+
+  html[data-dsh-claude-ui] [data-claude-details-track] [data-sidebar-right-panel='push'][data-sidebar-right-open]:not(:has([data-dockkit-split])):has([data-dockkit-host='dock'] [data-claude-session-details]) {
+    width: 312px !important;
+  }
+
+  html[data-dsh-claude-ui] [data-claude-details-track]:has(> [data-rightbar-col] [data-sidebar-right-panel='push'][data-sidebar-right-open] [data-dockkit-host='dock'] [data-claude-session-details]):not(:has(> [data-rightbar-col] [data-sidebar-right-open] [data-dockkit-split])) > [data-side='rightbar'] {
+    display: none;
+  }
+}
+
+html[data-dsh-claude-ui] [data-conversation-content][data-content-phase='active'] {
+  --dsh-composer-card-max-width: var(--dsh-chat-content-width);
+}
+
+html[data-dsh-claude-ui] [data-content-phase='active'] [data-composer-card] {
+  padding-block-start: 8px;
+  gap: 6px;
+  border: 1px solid var(--claude-border);
+  border-radius: 12px;
+  background: var(--claude-surface);
+  box-shadow: none;
+}
+
+html[data-dsh-claude-ui] [data-content-phase='active'] [data-composer-card] [data-composer-input] {
+  min-height: 30px;
+}
+
+/* The status strip moves the native cancel path above the composer. Match the
+   original square stop glyph so send, queue, and plugin controls remain. */
+html[data-dsh-claude-ui] [data-composer-seat]:has([data-claude-task-stop]) [data-composer-card] button:has(> svg[viewBox='0 0 16 16'] > rect[x='3'][y='3'][width='10'][height='10']) {
+  display: none;
+}
+
+html[data-dsh-claude-ui]:has([data-sidebar-right-open] [data-claude-session-details]) [data-conversation-content] [data-testid='todo-panel'] {
+  display: none;
+}
+
+html[data-dsh-claude-ui] [data-conversation-content] [data-tool][data-state='running']:has([data-terminal]) {
+  padding: 8px 14px 14px;
+  border: 1px solid var(--claude-border);
+  border-radius: 10px;
+  background: var(--claude-surface);
+}
+
+html[data-dsh-claude-ui] [data-conversation-content] [data-step-process] button[data-process-activity] {
+  gap: 8px;
+  padding-inline: 4px 8px;
+  border-radius: var(--dsw-radius-sm);
+  color: var(--claude-secondary);
+}
+
+/* Preserve the live row height shared with the native running indicator. */
+html[data-dsh-claude-ui] [data-conversation-content] [data-step-process] button[data-process-activity]:not(:has(> [data-shimmer])) {
+  min-block-size: 32px;
+}
+
+@media (hover: hover) {
+  html[data-dsh-claude-ui] [data-conversation-content] [data-step-process] button[data-process-activity]:hover {
+    background: var(--claude-hover);
+    color: var(--claude-ink);
+  }
+}
+
+html[data-dsh-claude-ui] [data-conversation-content] [data-slot='conversation.chat.node'] [data-terminal] {
+  --dsl-terminal-radius: 7px;
+  background: var(--claude-surface-muted);
+  box-shadow: inset 0 0 0 1px var(--claude-border);
+}
+
+html[data-dsh-claude-ui] [data-composer-seat] [data-approval-key] {
+  --claude-approval-surface: #fffaf3;
+  --claude-approval-border: #dcc8ae;
+  --claude-approval-label: #805b38;
+  padding-inline: var(--dsh-composer-side-clearance);
+}
+
+html[data-dsh-claude-ui] body[data-ds-dark-theme] [data-composer-seat] [data-approval-key] {
+  --claude-approval-surface: color-mix(in srgb, var(--claude-surface) 76%, var(--claude-accent-soft));
+  --claude-approval-border: color-mix(in srgb, var(--claude-border-strong) 76%, var(--claude-accent));
+  --claude-approval-label: var(--claude-accent);
+}
+
+html[data-dsh-claude-ui] [data-composer-seat] [data-approval-key] > :has(> [data-approval-scroll]) {
+  position: relative;
+  box-sizing: border-box;
+  container-type: inline-size;
+  min-block-size: 141px;
+  border-color: var(--claude-approval-border);
+  border-radius: 10px;
+  background: var(--claude-approval-surface);
+  box-shadow: none;
+}
+
+html[data-dsh-claude-ui] [data-composer-seat] [data-approval-key] :has(+ [data-approval-scroll]) {
+  padding: 10px 15px 6px;
+  background: transparent;
+  color: var(--claude-approval-label);
+}
+
+html[data-dsh-claude-ui] [data-composer-seat] [data-approval-key] [data-approval-scroll] {
+  gap: 8px;
+  max-height: min(148px, var(--dsh-composer-text-max-height));
+  padding: 0 15px 2px;
+  overflow-wrap: anywhere;
+}
+
+@container (min-width: 500px) {
+  html[data-dsh-claude-ui] [data-composer-seat] [data-approval-key] :has(+ [data-approval-scroll]) {
+    position: absolute;
+    z-index: 1;
+    inset-block-start: 15px;
+    inset-inline-end: 15px;
+    max-inline-size: 40%;
+    padding: 0;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  html[data-dsh-claude-ui] [data-composer-seat] [data-approval-key] [data-approval-scroll] {
+    padding-block-start: 12px;
+  }
+
+  html[data-dsh-claude-ui] [data-composer-seat] [data-approval-key] [data-approval-scroll] > :first-child {
+    padding-inline-end: 44%;
+  }
+}
+
+html[data-dsh-claude-ui] [data-composer-seat] [data-approval-scroll] > :has(> [data-slot='conversation.approval.detail']:not(:empty)) {
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: var(--claude-surface-muted);
+  color: var(--claude-ink);
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+  word-break: normal;
+}
+
+html[data-dsh-claude-ui] [data-composer-seat] [data-approval-scroll] + div {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  padding: 10px 15px 12px;
+  --dsw-alias-button-primary-fill: var(--claude-ink);
+  --dsw-alias-button-primary-hover: color-mix(in srgb, var(--claude-ink) 86%, var(--claude-surface));
+  --dsw-alias-label-primary-foreground: var(--claude-surface);
+}
+
+html[data-dsh-claude-ui] [data-composer-seat] [data-approval-scroll] + div > button {
+  min-block-size: 32px;
+  max-inline-size: 100%;
+  block-size: auto;
+  padding: 4px 10px;
+  border-radius: 6px;
+  overflow-wrap: anywhere;
+}
+
+/* Keep the resident composer in view without reopening its input while the
+   native approval owns the seat. Older engines keep the native takeover. */
+@supports (interactivity: inert) {
+  html[data-dsh-claude-ui] [data-composer-seat] > [data-slot='conversation.composer']:has(> [data-approval-key])
+    > [data-chain-overlay-fallback='conversation.composer'] {
+    display: block !important;
+    order: 1;
+    interactivity: inert;
+    opacity: 0.72;
+  }
+}
+
+/* 08 · Give the actual closing prose a result surface when the native turn
+   tail has changed files or declared deliveries. Keep wide tables on their
+   native breakout layout. */
+html[data-dsh-claude-ui] [data-conversation-content]
+  [data-chat-flow-kind='assistant-step']:not([hidden]):has(+ [data-chat-flow-kind='turn-tail'] [data-turn-tail][data-actions-reveal] > [data-slot='conversation.chat.turnTail'] :is([data-changed-files], [data-presented-files-row]))
+  > [data-slot='conversation.chat.node'] > div:not([data-streaming]) > div
+  > [data-text-interaction-source]:nth-last-child(1 of [data-text-interaction-source]):not(:has(.md-table-wide)) {
+  box-sizing: border-box;
+  min-block-size: 78px;
+  padding: 14px;
+  border: 1px solid var(--claude-border);
+  border-radius: 10px;
+  background: var(--claude-surface);
+
+  > :first-child:has(+ p) {
+    margin-block-end: 8px;
+  }
+
+  > :first-child + p {
+    margin-block-start: 8px;
+  }
+}
+
+/* The compact actions retain the original preview anchors, file rows,
+   delivery status, and contributed menus. */
+html[data-dsh-claude-ui] [data-conversation-content] [data-turn-tail]:has(> [data-slot='conversation.chat.turnTail'] :is([data-changed-files], [data-presented-files-row])) {
+  gap: 8px;
+}
+
+html[data-dsh-claude-ui] [data-conversation-content] [data-slot='conversation.chat.turnTail'] > [data-changed-files] {
+  --changes-fill: var(--claude-surface);
+  --changes-hover: var(--claude-surface-muted);
+  gap: 4px;
+  margin-block-start: 0;
+  overflow: visible;
+  border: 0;
+  background: transparent;
+}
+
+html[data-dsh-claude-ui] [data-conversation-content] [data-slot='conversation.chat.turnTail'] > [data-changed-files][data-single='true'] > span:first-child {
+  inline-size: fit-content;
+  max-inline-size: 100%;
+}
+
+html[data-dsh-claude-ui] [data-conversation-content] [data-slot='conversation.chat.turnTail'] > [data-changed-files] > ul {
+  overflow: hidden;
+  border: 1px solid var(--claude-border);
+  border-radius: 6px;
+  background: var(--claude-surface);
+}
+
+html[data-dsh-claude-ui] [data-conversation-content] [data-slot='conversation.chat.turnTail'] > :has(> [data-presented-files-row]) {
+  gap: 8px;
+  margin-block-start: 0;
+}
+
+html[data-dsh-claude-ui] [data-conversation-content] [data-slot='conversation.chat.turnTail'] [data-presented-files-row] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+html[data-dsh-claude-ui] [data-conversation-content] [data-slot='conversation.chat.turnTail'] [data-presented-file] {
+  --deliverable-fill: var(--claude-surface);
+  --deliverable-hover: var(--claude-surface-muted);
+}
+
+html[data-dsh-claude-ui] [data-conversation-content] [data-slot='conversation.chat.turnTail']
+  :is([data-changed-files] > button:first-child, [data-changed-files][data-single='true'] > span:first-child > button, [data-presented-file]) {
+  gap: 6px;
+  inline-size: fit-content;
+  max-inline-size: 100%;
+  min-block-size: 32px;
+  block-size: auto;
+  padding: 3px 10px;
+  border: 1px solid var(--claude-border);
+  border-radius: 6px;
+}
+
+html[data-dsh-claude-ui] [data-conversation-content] [data-slot='conversation.chat.turnTail']
+  :is([data-changed-files] > button:first-child > span:first-child, [data-changed-files][data-single='true'] > span:first-child > button > span:first-child, [data-presented-file] > button + span) {
+  inline-size: 14px;
+  block-size: 14px;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+html[data-dsh-claude-ui] [data-conversation-content] [data-slot='conversation.chat.turnTail']
+  :is([data-changed-files] > button:first-child > span:first-child, [data-changed-files][data-single='true'] > span:first-child > button > span:first-child, [data-presented-file] > button + span) > :is(svg, img) {
+  inline-size: 14px;
+  block-size: 14px;
+}
+
+html[data-dsh-claude-ui] [data-conversation-content] [data-slot='conversation.chat.turnTail']
+  :is([data-changed-files] > button:first-child > span:nth-child(2), [data-changed-files][data-single='true'] > span:first-child > button > span:nth-child(2), [data-presented-file] > div > div:first-child) {
+  flex-direction: row;
+  align-items: baseline;
+  justify-content: flex-start;
+  gap: 6px;
+}
+
+html[data-dsh-claude-ui] [data-conversation-content] [data-slot='conversation.chat.turnTail']
+  :is([data-changed-files] > button:first-child > span:nth-child(2), [data-changed-files][data-single='true'] > span:first-child > button > span:nth-child(2), [data-presented-file] > div > div:first-child) > span:first-child {
+  font-size: 12px;
+}
+
+html[data-dsh-claude-ui] [data-conversation-content] [data-slot='conversation.chat.turnTail'] [data-presented-file] > div {
+  gap: 6px;
+}
+
+html[data-dsh-claude-ui] [data-conversation-content] [data-slot='conversation.chat.turnTail'] [data-presented-file] > div > div:first-child:has(> [data-presented-description][role='status']) {
+  flex-wrap: wrap;
+  row-gap: 0;
+}
+
+html[data-dsh-claude-ui] [data-conversation-content] [data-slot='conversation.chat.turnTail'] [data-presented-description][role='status'] {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
