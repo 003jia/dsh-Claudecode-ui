@@ -1,0 +1,89 @@
+{
+  "version": "0.1.11",
+  "clientSha256": "9dbc84f1de8aa43a187a8287557648533588c66659ba8e096141941a5d9a4f6c",
+  "captures": [
+    {
+      "file": "01-home.png",
+      "description": "创造模式首页，紧凑侧栏与原生输入框",
+      "width": 1440,
+      "height": 960,
+      "sha256": "1c4b46367f9493c9ff987ab7fcad4ea5988bc3c110b36099bec99f277f95df12"
+    },
+    {
+      "file": "02-modes.png",
+      "description": "读取原生预设目录的工作模式菜单",
+      "width": 1440,
+      "height": 960,
+      "sha256": "3b5e445806156ef478fa03718d50dddc34a8e017155632664c62e57c6844c6bd"
+    },
+    {
+      "file": "03-delivery.png",
+      "description": "连续回复、交付文件与会话输入区",
+      "width": 1440,
+      "height": 960,
+      "sha256": "eb2315d97c1cc9e4c5d87972d8a4a9740c66fae8844d51a81ce891fa0ec800e0"
+    },
+    {
+      "file": "04-terminal.png",
+      "description": "原生命令卡片，分开显示命令、输出、工作目录与退出状态",
+      "width": 1440,
+      "height": 960,
+      "sha256": "f4d1bc5966ca6b0c52cc18cd4dbcdec8b72861cdcc4eccf3a3c1b87a10e5520d"
+    },
+    {
+      "file": "05-context.png",
+      "description": "300px 原生详情侧栏与完整上下文分类",
+      "width": 1440,
+      "height": 960,
+      "sha256": "e669688321013cdd237d44883123fe9b662a998c8c49d92568a4cf7a3e52c406"
+    },
+    {
+      "file": "06-context-tools.png",
+      "description": "可展开的全部工具定义明细；示例数据通过原生投影提供",
+      "width": 1440,
+      "height": 960,
+      "sha256": "9a5efdf7fc3625419792c91452b61d6074bde5fc6092b77e7ba2bf83f0445bf3"
+    },
+    {
+      "file": "07-dark.png",
+      "description": "深色主题，包含已选中会话和上下文详情",
+      "width": 1440,
+      "height": 960,
+      "sha256": "7a0abe9e5c8ddda5a68309f13777fb32f43284e10d23351235a5b58ffba7dd05"
+    },
+    {
+      "file": "08-account.png",
+      "description": "macOS 平台条件演示：折叠侧栏后的独立头像与原生账户菜单",
+      "width": 1440,
+      "height": 960,
+      "sha256": "fb70d5a635084d1a13e3e7d4b95018c000695d4ce5aaf901626dc84f44b73785"
+    },
+    {
+      "file": "09-approval.png",
+      "description": "真实原生等待审批状态；操作仅写入临时演示项目",
+      "width": 1440,
+      "height": 960,
+      "sha256": "a3ec4696b0c99bf071988795078a762a57f33e661b0b9dea11fae64308bd08bf"
+    },
+    {
+      "file": "10-running.png",
+      "description": "原生命令执行中状态与停止入口；模型响应来自明确的本地回放",
+      "width": 1440,
+      "height": 960,
+      "sha256": "b7a474e944d64b8719b63b11e7c41d14355c63c873f9b88acb0b5e6a2adab53a"
+    },
+    {
+      "file": "11-command-complete.png",
+      "description": "命令完成后原生输出区显示实际 stdout 与完成状态",
+      "width": 1440,
+      "height": 960,
+      "sha256": "8f2af421fdbb55b2a88b4a84422cf12756e952d333fd79a89c0a55a989ba4802"
+    }
+  ],
+  "notes": [
+    "Screenshots show the real isolated Web client loaded with the release build. Demo project and text are not private user history.",
+    "Context tool definitions and message categories include explicitly synthetic Host projection fixtures; token values are demo data, not a provider benchmark.",
+    "The account screenshot uses an explicit darwin platform condition in the isolated client and does not claim native Electron acceptance.",
+    "The running screenshot shows native execution state. The standard Bash card displays stdout after the command settles, shown separately in command-complete."
+  ]
+}

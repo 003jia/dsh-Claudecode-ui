@@ -9,8 +9,9 @@ import type {} from '@deepseek-ai/dsh-client-ui-workspace/client'
 import type {} from '@deepseek-ai/dsh-client-ui-conversation/client'
 import type { ConfigForm } from '@deepseek-ai/dsh-client-ui-settings/client'
 import type { InjectFace, PropsLocale, PropsRuntime } from '@deepseek-ai/dsh-client-ui-slots'
+import { FishLogo } from '@deepseek-ai/dsh-client-ui-primitives'
 import css from './shell.module.css'
-import { installTaskSettings } from './task-settings.ts'
+import { hideHomeTaskSettings } from './task-settings.ts'
 import { installModeMenu } from './mode-menu.tsx'
 
 type Mode = 'standard' | 'create'
@@ -24,7 +25,6 @@ interface Preferences {
 }
 
 const zh = {
-  'brand.name': 'dsh',
   'welcome.default': '你来了。',
   'welcome.named': '你来了，{name}。',
   'welcome.create': '从这里，开始构建。',
@@ -42,12 +42,9 @@ const zh = {
   'suggestions.customPrompt': '请帮我设计一个适合我的工作流。先了解我的目标、常用工具和希望减少的重复工作。',
   'suggestions.staged': '已放入草稿，确认后即可发送。',
   'suggestions.unavailable': '当前输入暂不可编辑，请稍后再试。',
-  'taskSettings.label': '任务设置',
-  'taskSettings.assistant': '任务设置，当前助手：{name}',
 }
 
 const en: Record<keyof typeof zh, string> = {
-  'brand.name': 'dsh',
   'welcome.default': 'You’re here.',
   'welcome.named': 'You’re here, {name}.',
   'welcome.create': 'Start building, right here.',
@@ -65,8 +62,6 @@ const en: Record<keyof typeof zh, string> = {
   'suggestions.customPrompt': 'Help me design a workflow. First understand my goals, everyday tools, and the repetitive work I want to reduce.',
   'suggestions.staged': 'Added to your draft. Review it before sending.',
   'suggestions.unavailable': 'The input cannot be edited right now. Try again shortly.',
-  'taskSettings.label': 'Task settings',
-  'taskSettings.assistant': 'Task settings, current assistant: {name}',
 }
 
 declare module '@deepseek-ai/dsh-client-ui-slots' {
@@ -80,18 +75,6 @@ type PreferencesFace = {
   hooks: { preferences: ConfigForm<Preferences> }
 }
 
-type WordmarkProps = PropsRuntime<'sidebar.brand.name'> & PropsLocale<'claude.shell'>
-
-/** Product wordmark for the existing sidebar brand interaction. */
-function Wordmark({ t }: WordmarkProps) {
-  return <span className={css.wordmark} data-dsh-claude-wordmark="">{t('brand.name')}</span>
-}
-
-/** Suppress only the explicitly replaced brand glyph, leaving its native control intact. */
-function EmptyBrandMark() {
-  return <span data-dsh-claude-empty-mark="" hidden />
-}
-
 type WelcomeProps = PropsRuntime<'conversation.hero.brand.mark'>
   & InjectFace<PreferencesFace> & PropsLocale<'claude.shell'>
 
@@ -102,6 +85,9 @@ function Welcome({ usePreferences, t }: WelcomeProps) {
   const displayName = preferences?.displayName.trim() ?? ''
   return (
     <div className={css.welcome} data-dsh-claude-welcome="">
+      <span className={css.welcomeMark} data-dsh-claude-hero-mark="" aria-hidden="true">
+        <FishLogo size={34} />
+      </span>
       <p className={css.welcomeHint}>{t(creating ? 'welcome.createHint' : 'welcome.standardHint')}</p>
       <h1 className={css.welcomeTitle}>
         {creating ? t('welcome.create') : displayName === '' ? t('welcome.default') : t('welcome.named', { name: displayName })}
@@ -196,9 +182,6 @@ function installAnchors(): () => void {
         continue
       }
     }
-    for (const emptyMark of document.querySelectorAll<HTMLElement>('[data-dsh-claude-empty-mark]')) {
-      mark(emptyMark.closest('[data-slot="sidebar.brand.mark"]')?.parentElement, 'data-dsh-claude-sidebar-mark-seat')
-    }
     for (const welcome of document.querySelectorAll<HTMLElement>('[data-dsh-claude-welcome]')) {
       const brandSeat = welcome.closest('[data-slot="conversation.hero.brand.mark"]')?.parentElement
       const headline = brandSeat?.parentElement
@@ -263,27 +246,19 @@ export function installShell(ctx: Context): void {
     update()
     const unsubscribe = preferences.subscribe(update)
     const removeAnchors = installAnchors()
-    const shellText = ctx.locale.bind('claude.shell')
-    const removeTaskSettings = installTaskSettings(() => ({
-      trigger: shellText('taskSettings.label'),
-      accessibleName: name => shellText('taskSettings.assistant', { name }),
-    }), listener => ctx.locale.subscribe(listener))
+    const restoreTaskSettings = hideHomeTaskSettings()
     return () => {
       unsubscribe()
       removeAnchors()
-      removeTaskSettings()
+      restoreTaskSettings()
       if (previousMode === null) root.removeAttribute('data-dsh-claude-mode')
       else root.setAttribute('data-dsh-claude-mode', previousMode)
       if (previousWidth === null) root.removeAttribute('data-dsh-claude-width')
       else root.setAttribute('data-dsh-claude-width', previousWidth)
     }
   }, 'claude-ui: presentation preferences and native anchors')
-  ctx.slots.inject('sidebar.brand.name', () => ctx.slots.register({
-    name: 'sidebar.brand.name', priority: -100, locale: 'claude.shell',
-  }, Wordmark))
-  ctx.slots.inject('sidebar.brand.mark', () => ctx.slots.register({
-    name: 'sidebar.brand.mark', priority: -100,
-  }, EmptyBrandMark))
+  // The native brand slots keep both the official artwork and the rail's
+  // whale-to-toggle behavior. This plugin only decorates its own hero seat.
   ctx.slots.inject('conversation.hero.brand.mark', () => ctx.slots.register({
     name: 'conversation.hero.brand.mark', priority: -100, locale: 'claude.shell',
     inject: (): PreferencesFace => ({ hooks: { preferences } }),

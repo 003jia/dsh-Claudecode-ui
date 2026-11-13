@@ -11,6 +11,9 @@ import { installNavigation } from './navigation.tsx'
 import { installAccountMenu } from './account-menu.tsx'
 import { installContextWindow } from './context-window.tsx'
 import { installTaskRuntime } from './task-runtime.tsx'
+import { installComposerV2 } from './composer-v2.ts'
+import { installTerminalDisclosure } from './terminal-disclosure.ts'
+import { installRightbarVisibility } from './rightbar-visibility.ts'
 
 /** Native UI owners remain active alongside this plugin. */
 export const inject = ['slots', 'configForms', 'theme', 'locale', 'layout', 'uiWorkspace', 'connection', 'sessions', 'remote', 'remote.agentPresets', 'uiSession']
@@ -19,6 +22,7 @@ export const inject = ['slots', 'configForms', 'theme', 'locale', 'layout', 'uiW
  * @param ctx - Browser context exposing the native owners.
  */
 export function apply(ctx: Context): void {
+  installRightbarVisibility(ctx)
   installVisual(ctx)
   installAccountMenu(ctx)
   installShell(ctx)
@@ -26,4 +30,6 @@ export function apply(ctx: Context): void {
   installNavigation(ctx)
   installContextWindow(ctx)
   installTaskRuntime(ctx)
+  installComposerV2(ctx)
+  installTerminalDisclosure(ctx)
 }

@@ -1,13 +1,3 @@
-.wordmark {
-  display: inline-block;
-  color: var(--claude-ink, var(--dsw-alias-label-primary));
-  font-family: var(--claude-font-brand, 'Lora', Georgia, serif);
-  font-size: 33px;
-  font-weight: 500;
-  line-height: 40px;
-  letter-spacing: -1.5px;
-}
-
 .welcome {
   display: flex;
   flex-direction: column;
@@ -17,6 +7,14 @@
   min-width: 0;
   padding: 0;
   color: var(--claude-ink, var(--dsw-alias-label-primary));
+}
+
+.welcomeMark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--dsw-alias-label-primary);
+  line-height: 0;
 }
 
 .welcomeTitle {

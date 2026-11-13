@@ -1,0 +1,183 @@
+/* DSH 0.2.2-alpha.2 native Bash presentation. Keep the keyed renderer,
+   disclosure, ANSI output, copy payload, exit facts, and Inspect owner intact.
+   Class selectors support both the static Vite and dynamic plugin module
+   names, and address the native primitive's private layout only inside
+   the verified Bash marker; other plugins' tool views are not selected. */
+html[data-dsh-claude-ui] [data-conversation-content] :has(> [data-sample='bash']) {
+  min-width: 0;
+}
+
+html[data-dsh-claude-ui] [data-conversation-content] :has(> [data-sample='bash'][aria-expanded='true']) {
+  margin-block: 8px;
+  border: 1px solid var(--claude-border);
+  border-radius: 10px;
+  background: var(--claude-surface);
+}
+
+html[data-dsh-claude-ui] [data-conversation-content] [data-sample='bash'] {
+  min-height: 32px;
+  height: auto;
+  color: var(--claude-secondary);
+}
+
+html[data-dsh-claude-ui] [data-conversation-content] [data-sample='bash'][aria-expanded='true'] {
+  min-height: 40px;
+  padding: 4px 14px;
+}
+
+html[data-dsh-claude-ui] [data-conversation-content] [data-sample='bash'] [class$='_title'],
+html[data-dsh-claude-ui] [data-conversation-content] [data-sample='bash'] [class$='_summary'] {
+  font-size: max(14px, var(--dsh-content-font-size-secondary, 13px));
+  line-height: 22px;
+}
+
+html[data-dsh-claude-ui] [data-conversation-content] [data-sample='bash']:focus-visible {
+  outline: var(--dsw-focus-ring-width) solid var(--dsw-focus-ring-color);
+  outline-offset: -2px;
+  border-radius: 8px;
+}
+
+html[data-dsh-claude-ui] [data-conversation-content] [data-sample='bash'] + div > [data-terminal] {
+  --dsl-terminal-font: 400 max(14px, var(--dsh-content-font-size-secondary, 13px)) / 22px var(--ds-font-family-code);
+  --dsl-terminal-line-height: 22px;
+  --dsl-terminal-output-max-height: 320px;
+  --dsl-terminal-command-whitespace: pre-wrap;
+  --dsl-terminal-gutter: 0px;
+  --dsl-terminal-radius: 8px;
+  position: relative;
+  min-width: 0;
+  margin: 0;
+  padding: 0 14px 38px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+/* A short prompt and the actual command get the entire first line. The
+   native cwd caption remains available below; Inspect retains full inputs. */
+html[data-dsh-claude-ui] [data-conversation-content] [data-sample='bash'] + div > [data-terminal] > :is([class$='_header'], [class*='_header_']) {
+  position: static;
+  gap: 12px;
+  margin: 0;
+  padding: 9px 12px;
+  border: 1px solid var(--claude-border);
+  border-radius: 8px;
+  background: var(--claude-canvas);
+}
+
+html[data-dsh-claude-ui] [data-conversation-content] [data-sample='bash'] + div > [data-terminal] :is([class$='_promptLine'], [class*='_promptLine_']) {
+  position: static;
+  align-items: baseline;
+  gap: 8px;
+}
+
+html[data-dsh-claude-ui] [data-conversation-content] [data-sample='bash'] + div > [data-terminal] :is([class$='_promptLine'], [class*='_promptLine_'])::before {
+  content: '$';
+  flex: none;
+  color: var(--claude-muted);
+}
+
+html[data-dsh-claude-ui] [data-conversation-content] [data-sample='bash'] + div > [data-terminal] [data-command-text] {
+  flex: 1 1 auto;
+  min-width: 0;
+  color: var(--dsw-alias-label-primary-bluish);
+}
+
+html[data-dsh-claude-ui] [data-conversation-content] [data-sample='bash'] + div > [data-terminal] :is([class$='_cwd'], [class*='_cwd_']) {
+  position: absolute;
+  inset-inline-start: 14px;
+  inset-block-end: 10px;
+  max-width: calc(100% - 140px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--claude-muted);
+  font: 12px / 18px var(--dsw-font-family);
+}
+
+html[data-dsh-claude-ui] [data-conversation-content] [data-sample='bash'] + div > [data-terminal] :is([class$='_promptLine'], [class*='_promptLine_']) ~ :is([class$='_promptLine'], [class*='_promptLine_']) :is([class$='_cwd'], [class*='_cwd_']) {
+  display: none;
+}
+
+/* Show the native localized state as text; its value still comes from the
+   terminal's running/exit/signal facts, including unknown termination. */
+html[data-dsh-claude-ui] [data-conversation-content] [data-sample='bash'] + div > [data-terminal] :is([class$='_runStateLabel'], [class*='_runStateLabel_']) {
+  position: absolute;
+  inset-inline-end: 14px;
+  inset-block-end: 10px;
+  width: auto;
+  height: auto;
+  overflow: visible;
+  clip-path: none;
+  color: var(--claude-secondary);
+  font: 12px / 18px var(--dsw-font-family);
+}
+
+html[data-dsh-claude-ui] [data-conversation-content] [data-sample='bash'] + div > [data-terminal] :is([class$='_runState'], [class*='_runState_']) {
+  display: none;
+}
+
+html[data-dsh-claude-ui] [data-conversation-content] [data-sample='bash'][data-state='error'] + div > [data-terminal] :is([class$='_runStateLabel'], [class*='_runStateLabel_']) {
+  color: var(--dsw-alias-state-error-primary);
+}
+
+html[data-dsh-claude-ui] [data-conversation-content] [data-sample='bash'][data-state='stopped'] + div > [data-terminal] :is([class$='_runStateLabel'], [class*='_runStateLabel_']) {
+  color: var(--dsw-alias-state-warn-label);
+}
+
+html[data-dsh-claude-ui] [data-conversation-content] [data-sample='bash'] + div > [data-terminal] > :is([class$='_output'], [class*='_output_']),
+html[data-dsh-claude-ui] [data-conversation-content] [data-sample='bash'] + div > [data-terminal] > :is([class$='_empty'], [class*='_empty_']) {
+  padding: 14px 0 2px;
+  color: var(--claude-secondary);
+}
+
+/* Preserve preformatted columns and the native bounded output scroller. */
+html[data-dsh-claude-ui] [data-conversation-content] [data-sample='bash'] + div > [data-terminal] :is([class$='_line'], [class*='_line_']) {
+  white-space: pre;
+  line-height: 22px;
+}
+
+html[data-dsh-claude-ui] [data-conversation-content] [data-sample='bash'] + div > [data-terminal] :is([class$='_copyButton'], [class*='_copyButton_']) {
+  min-height: 28px;
+  margin-block: -3px;
+  padding-inline: 4px;
+  border-radius: 4px;
+  background: var(--claude-canvas);
+  font: 12px / 22px var(--dsw-font-family);
+}
+
+html[data-dsh-claude-ui] [data-conversation-content] [data-sample='bash'] + div > button {
+  align-self: flex-end;
+  min-height: 28px;
+  margin: 0 10px 6px;
+  padding: 3px 6px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--claude-secondary);
+  font-size: 12px;
+  opacity: 1;
+}
+
+html[data-dsh-claude-ui] [data-conversation-content] [data-sample='bash'] + div :is(:is([class$='_copyButton'], [class*='_copyButton_']), button):focus-visible {
+  outline: var(--dsw-focus-ring-width) solid var(--dsw-focus-ring-color);
+  outline-offset: 1px;
+}
+
+/* Failed/background/spilled calls without terminal material keep native
+   IN/OUT instead of disappearing behind a cosmetic terminal replacement. */
+html[data-dsh-claude-ui] [data-conversation-content] [data-sample='bash'] + div > [class$='_ioCard'] {
+  margin: 0 14px 8px;
+  border-color: var(--claude-border);
+  border-radius: 8px;
+  background: var(--claude-canvas);
+  font: 14px / 22px var(--ds-font-family-code);
+}
+
+@media (hover: hover) {
+  html[data-dsh-claude-ui] [data-conversation-content] [data-sample='bash'] + div :is(:is([class$='_copyButton'], [class*='_copyButton_']), button):hover {
+    background: var(--claude-hover);
+    color: var(--claude-ink);
+  }
+}

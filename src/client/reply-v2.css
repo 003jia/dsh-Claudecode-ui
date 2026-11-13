@@ -1,0 +1,115 @@
+/* Code v2: continuous native Markdown. Settings still own the reader's font
+   size and width; no reply, turn-tail, or third-party renderer is replaced. */
+html[data-dsh-claude-ui] [data-chat-flow-kind='assistant-step'] > [data-slot='conversation.chat.node'] > div > div > [class*='_markdown']:not([data-markdown-variant]) {
+  font-family: var(--dsw-font-family);
+  font-size: var(--dsh-content-font-size, 15px);
+  line-height: calc(26px + var(--dsh-content-font-delta, 0px));
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+html[data-dsh-claude-ui] [data-chat-flow-kind='assistant-step'] > [data-slot='conversation.chat.node'] > div > div > [class*='_markdown']:not([data-markdown-variant]) :is(h1, h2, h3, h4) {
+  font-family: var(--dsw-font-family);
+  font-weight: 600;
+  letter-spacing: 0;
+  margin-block: 24px 10px;
+}
+
+html[data-dsh-claude-ui] [data-chat-flow-kind='assistant-step'] > [data-slot='conversation.chat.node'] > div > div > [class*='_markdown']:not([data-markdown-variant]) h1 {
+  font-size: calc(20px + var(--dsh-content-font-delta, 0px));
+  line-height: 1.5;
+}
+
+html[data-dsh-claude-ui] [data-chat-flow-kind='assistant-step'] > [data-slot='conversation.chat.node'] > div > div > [class*='_markdown']:not([data-markdown-variant]) :is(h2, h3, h4) {
+  font-size: calc(16px + var(--dsh-content-font-delta, 0px));
+  line-height: 1.6;
+}
+
+html[data-dsh-claude-ui] [data-chat-flow-kind='assistant-step'] > [data-slot='conversation.chat.node'] > div > div > [class*='_markdown']:not([data-markdown-variant]) > :is(p, ul, ol) {
+  margin-block: 17px;
+}
+
+html[data-dsh-claude-ui] [data-chat-flow-kind='assistant-step'] > [data-slot='conversation.chat.node'] > div > div > [class*='_markdown']:not([data-markdown-variant]) > :first-child {
+  margin-block-start: 0;
+}
+
+html[data-dsh-claude-ui] [data-chat-flow-kind='assistant-step'] > [data-slot='conversation.chat.node'] > div > div > [class*='_markdown']:not([data-markdown-variant]) > :last-child {
+  margin-block-end: 0;
+}
+
+html[data-dsh-claude-ui] [data-chat-flow-kind='assistant-step'] > [data-slot='conversation.chat.node'] > div > div > [class*='_markdown']:not([data-markdown-variant]) :is(th, td) {
+  padding: 9px 12px;
+  line-height: 1.65;
+  border-color: var(--claude-border);
+}
+
+html[data-dsh-claude-ui] [data-chat-flow-kind='assistant-step'] > [data-slot='conversation.chat.node'] > div > div > [class*='_markdown']:not([data-markdown-variant]) th {
+  background: transparent;
+  font-weight: 600;
+}
+
+html[data-dsh-claude-ui] [data-conversation-content] [data-turn-process] {
+  color: var(--claude-secondary);
+}
+
+/* File cards remain native actions; only their visual weight changes. */
+html[data-dsh-claude-ui] [data-conversation-content] [data-slot='conversation.chat.turnTail']
+  :is([data-changed-files] > button:first-child, [data-changed-files][data-single='true'] > span:first-child > button, [data-presented-file]) {
+  min-height: 42px;
+  padding: 7px 12px;
+  border-radius: 8px;
+  background: var(--claude-surface-raised);
+}
+
+html[data-dsh-claude-ui] [data-conversation-content] [data-slot='conversation.chat.turnTail']
+  :is([data-changed-files] > button:first-child > span:nth-child(2), [data-changed-files][data-single='true'] > span:first-child > button > span:nth-child(2), [data-presented-file] > div > div:first-child) > span:first-child {
+  font-size: 13px;
+}
+
+/* Keep approval content in normal flow. Long commands use the native
+   scrollport, and the native approval owns every permission and action. */
+html[data-dsh-claude-ui] [data-composer-seat] [data-approval-key] :has(+ [data-approval-scroll]) {
+  position: static;
+  max-inline-size: none;
+  padding: 12px 15px 6px;
+  white-space: normal;
+}
+
+html[data-dsh-claude-ui] [data-composer-seat] [data-approval-key] [data-approval-scroll] {
+  max-height: min(260px, var(--dsh-composer-text-max-height));
+  padding: 0 15px 2px;
+}
+
+html[data-dsh-claude-ui] [data-composer-seat] [data-approval-key] [data-approval-scroll] > :first-child {
+  padding-inline-end: 0;
+}
+
+html[data-dsh-claude-ui] [data-composer-seat] [data-approval-scroll] + div {
+  --dsw-alias-button-primary-fill: var(--claude-accent);
+  --dsw-alias-button-primary-hover: var(--claude-accent-hover);
+  --dsw-alias-label-primary-foreground: var(--claude-on-accent);
+}
+
+@supports (interactivity: inert) {
+  html[data-dsh-claude-ui] [data-composer-seat] > [data-slot='conversation.composer']:has(> [data-approval-key])
+    > [data-chain-overlay-fallback='conversation.composer'] {
+    opacity: 0.48;
+  }
+}
+
+@media (max-width: 1100px) {
+  html[data-dsh-claude-ui] [data-conversation-content] {
+    --dsh-chat-content-width: min(calc(100% - 40px), var(--dsh-chat-user-width, 700px));
+    --dsh-composer-side-clearance: 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  html[data-dsh-claude-ui] [data-conversation-content] {
+    --dsh-chat-content-width: calc(100% - 24px);
+    --dsh-composer-side-clearance: 12px;
+  }
+}

@@ -1,5 +1,5 @@
 /** Presentation of the current DSH turn in the composer and the native right pane. */
-import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import type { Context } from '@deepseek-ai/cordis'
 import type { IJobs, JobsSnapshot } from '@deepseek-ai/dsh-api-job-controller/client'
 import type { ConnectionStateSource } from '@deepseek-ai/dsh-client-connection/client'
@@ -15,6 +15,7 @@ import type {} from '@deepseek-ai/dsh-tool-todo/client'
 import type {} from '@deepseek-ai/dsh-working-directory'
 import { fileAddressFor } from '@deepseek-ai/dsh-util-workspace-path'
 import css from './task-runtime.module.css'
+import { DetailsContext, installDetailsContextLocale, createDetailsContextActions, type DetailsContextActions } from './details-context.tsx'
 
 const pane = 'claude-ui.session-details'
 const zh = {
@@ -26,7 +27,8 @@ const zh = {
   context: '上下文', used: '{percent}% 已用', seconds: '{seconds} 秒', minutes: '{minutes} 分 {seconds} 秒',
   disconnected: '连接已断开', connecting: '正在重新连接', unavailable: '当前会话详情暂不可用',
   todoDone: '已完成', todoActive: '执行中', todoPending: '待开始', openFailed: '无法打开此项',
-  changeCount: '{count} 个文件', changesLoading: '正在读取改动…', changesMissing: '本轮改动详情已不可用',
+  changeCount: '{count} 个文件', changesLoading: '正在读取改动…', changesMissing: '这轮改动的记录暂不可用',
+  workspace: '工作区', browseFiles: '浏览文件',
 }
 const en: Record<keyof typeof zh, string> = {
   details: 'Session details', environment: 'Environment', directory: 'Working directory', files: 'Files', changes: 'Changes',
@@ -37,7 +39,8 @@ const en: Record<keyof typeof zh, string> = {
   context: 'Context', used: '{percent}% used', seconds: '{seconds} sec', minutes: '{minutes} min {seconds} sec',
   disconnected: 'Disconnected', connecting: 'Reconnecting', unavailable: 'Session details are unavailable',
   todoDone: 'Completed', todoActive: 'In progress', todoPending: 'Pending', openFailed: 'Could not open this item',
-  changeCount: '{count} files', changesLoading: 'Loading changes…', changesMissing: 'Change details are no longer available for this turn',
+  changeCount: '{count} files', changesLoading: 'Loading changes…', changesMissing: 'Change records for this turn are unavailable',
+  workspace: 'Workspace', browseFiles: 'Browse files',
 }
 declare module '@deepseek-ai/dsh-client-ui-slots' {
   interface LocaleNamespaceMap { 'claude.runtime': keyof typeof zh }
@@ -48,8 +51,8 @@ declare module '@deepseek-ai/dsh-client-ui-sidebar-right/client' {
 
 type Locale = PropsLocale<'claude.runtime'>
 type ChatFace = { hooks: { chat: HostObservable<ChatSnapshot | undefined> } }
-type StripFace = { stop: () => Promise<void>; hooks: ChatFace['hooks'] & { connectionState: ConnectionStateSource } }
-type DetailsFace = {
+type StripFace = { hooks: { connectionState: ConnectionStateSource } }
+type DetailsFace = DetailsContextActions & {
   hooks: ChatFace['hooks'] & { jobs: HostObservable<JobsSnapshot>; canReview: HostObservable<boolean> }
   watchJobs: () => () => void
   openFiles?: () => boolean
@@ -59,7 +62,6 @@ type DetailsFace = {
 }
 type HeaderFace = {
   openDetails: () => boolean
-  openDetailsWhenReady: () => void
   openFiles?: () => boolean
   openChanges: DetailsFace['openChanges']
   hooks: ChatFace['hooks'] & { canReview: HostObservable<boolean> }
@@ -86,60 +88,20 @@ function deliveryOf(turn: TurnLocation | undefined): Deliverables | undefined {
   return (turn.data.get as (key: string) => Deliverables | undefined)('deliverables')
 }
 
-function duration(ms: number, t: Locale['t']): string {
-  const seconds = Math.max(0, Math.floor(ms / 1000))
-  return seconds < 60 ? t('seconds', { seconds }) : t('minutes', { minutes: Math.floor(seconds / 60), seconds: seconds % 60 })
-}
-
 function baseName(path: string): string {
   return path.replace(/[\\/]+$/, '').split(/[\\/]/).at(-1) || path
 }
 
-function TaskStrip({ session, sessionId, useChat, useSessionStatus, useConnectionState, useAccess, stop, t }:
+function TaskStrip({ session, useConnectionState, t }:
 PropsRuntime<'conversation.input.dock'> & InjectFace<StripFace> & Locale) {
-  const turn = useChat(lastTurn)
-  const tool = useChat(view => view?.legacy.runningCalls.at(-1))
-  const pending = useSessionStatus(status => status.get(sessionId)?.pendingInteraction?.kind)
   const connection = useConnectionState(value => value)
-  const canStop = useAccess('session/cancel')
-  const live = session.running && pending === undefined && connection === 'connected'
-  const [now, setNow] = useState(Date.now)
-  const [stopping, setStopping] = useState(false)
-  const stopPending = useRef(false)
-  const start = tool?.time ?? turn?.start?.time
-  useEffect(() => {
-    if (!live || start === undefined) return
-    setNow(Date.now())
-    const timer = window.setInterval(() => setNow(Date.now()), 1000)
-    return () => window.clearInterval(timer)
-  }, [live, start])
-  if (session.blank || pending !== undefined || (turn === undefined && !session.running)) return null
-  const reason = turn?.end?.data.reason.kind
-  const state = live ? 'running' : session.running ? 'offline' : reason
-  if (state === undefined) return null
-  const label = state === 'running' ? (tool === undefined ? t('working') : t('tool', { name: tool.name }))
-    : state === 'offline' ? t(connection === 'connecting' ? 'connecting' : 'disconnected')
-    : state === 'completed' ? t('completed') : state === 'aborted' || state === 'interrupted' ? t('stopped')
-    : state === 'error' ? t('failed') : t('ended')
-  const end = live ? now : turn?.end?.time
-  const begin = live ? start : turn?.start?.time
-  const elapsed = begin === undefined || end === undefined ? undefined : duration(end - begin, t)
-  const showStop = live && canStop
-  return <div className={css.strip} data-claude-task-strip={state} data-claude-task-stop={showStop || undefined}>
-    <div className={css.stripLabel}>
-      <span className={css.state} data-state={state} aria-hidden="true">{state === 'completed' ? '✓' : ''}</span>
-      <span role="status">{label}</span>{elapsed !== undefined && <span className={css.secondary}>· {elapsed}</span>}
-    </div>
-    {showStop && <button type="button" className={css.stop} disabled={stopping} onClick={async () => {
-      if (stopPending.current) return
-      stopPending.current = true
-      setStopping(true)
-      try { await stop() } finally { stopPending.current = false; setStopping(false) }
-    }}><span className={css.stopIcon} aria-hidden="true" />{t(stopping ? 'stopping' : 'stop')}</button>}
+  if (!session.running || connection === 'connected') return null
+  return <div className={css.strip} data-claude-task-strip="offline">
+    <span role="status">{t(connection === 'connecting' ? 'connecting' : 'disconnected')}</span>
   </div>
 }
 
-function SessionToolbar({ sessionId, useSession, useSessionStatus, useChat, useCanReview, openDetails, openDetailsWhenReady, openChanges, openFiles, t }:
+function SessionToolbar({ sessionId, useSession, useSessionStatus, useChat, useCanReview, openDetails, openChanges, openFiles, t }:
 PropsRuntime<'conversation.session.header.utilities'> & InjectFace<HeaderFace> & Locale) {
   const blank = useSession(session => session.blank)
   const running = useSession(session => session.running)
@@ -148,16 +110,12 @@ PropsRuntime<'conversation.session.header.utilities'> & InjectFace<HeaderFace> &
   const enabled = useCanReview(value => value)
   const delivery = deliveryOf(turn)
   const changes = enabled ? delivery?.changes : undefined
-  const shouldRevealDetails = running || pending !== undefined || changes !== undefined || (delivery?.presented?.length ?? 0) > 0
   const [failed, setFailed] = useState(false)
-  useEffect(() => {
-    if (!blank && shouldRevealDetails) openDetailsWhenReady()
-  }, [blank, shouldRevealDetails, openDetailsWhenReady])
   const act = (open: () => boolean): void => { setFailed(!open()) }
   if (blank) return null
   return <div className={css.toolbar} data-claude-task-toolbar="" data-attention={pending ?? (running ? 'running' : undefined)}>
     <button type="button" className={css.detailsButton} onClick={() => act(openDetails)} aria-label={t('details')} title={t('details')}>
-      <IconPanelLeftOutlineRegular size={16} /><span>{t('details')}</span>
+      <IconPanelLeftOutlineRegular size={16} />
     </button>
     {changes !== undefined && turn !== undefined && <button type="button" onClick={() => act(() => openChanges(changes.seq, turn.turn))} aria-label={t('review')} title={t('review')}>
       <IconCodeOutlineRegular size={16} />
@@ -194,7 +152,7 @@ function Changes({ seq, turn, readChanges, openChanges, t }: Pick<DetailsFace, '
   }, [seq, readChanges])
   if (summary?.total === 0) return null
   return <Section title={t('changes')} summary={summary ? t('changeCount', { count: summary.total }) : undefined}>
-    {summary == null ? <p className={css.secondary}>{t(summary === null ? 'changesMissing' : 'changesLoading')}</p> : <>
+    {summary == null ? <div className={css.emptyState}><IconCodeOutlineRegular size={15} /><p>{t(summary === null ? 'changesMissing' : 'changesLoading')}</p></div> : <>
       <ul>{summary.files.map((file, index) => <li key={`${file.display}:${index}`}>
         <button type="button" className={css.file} title={file.display} onClick={() => setFailed(!openChanges(seq, turn, index))}>
           <IconCodeOutlineRegular size={14} /><span>{file.display}</span>
@@ -208,7 +166,7 @@ function Changes({ seq, turn, readChanges, openChanges, t }: Pick<DetailsFace, '
 }
 
 function Details({ sessionId, useSessions, useWorkspaces, useSessionStatus, useProjection, useChat, useJobs, useCanReview, useTabInfo,
-  watchJobs, openFiles, openChanges, openFile, readChanges, t }: PropsRuntime<'sidebar.right.pane.tab'> & InjectFace<DetailsFace> & Locale) {
+  watchJobs, openFiles, openChanges, openFile, readChanges, contextText, openContextDetails, t }: PropsRuntime<'sidebar.right.pane.tab'> & InjectFace<DetailsFace> & Locale) {
   const { tab: { visible } } = useTabInfo()
   const originalCwd = useSessions(list => list.byId[sessionId]?.cwd)
   const workspace = useWorkspaces(list => list.items.find(item => item.sessionIds.includes(sessionId)))
@@ -216,51 +174,33 @@ function Details({ sessionId, useSessions, useWorkspaces, useSessionStatus, useP
   const todos = useProjection('todos') ?? []
   const pending = useSessionStatus(status => status.get(sessionId)?.pendingInteraction?.kind)
   const pressure = useProjection('contextPressure')
+  const breakdown = useProjection('contextBreakdown')
+  const useOptionalProjection = useProjection as (key: string) => unknown
+  const headers = useOptionalProjection('contextHeaders')
+  const timeline = useOptionalProjection('contextTimeline')
   const turn = useChat(lastTurn)
   const jobs = useJobs(value => value.rows[sessionId])
   const enabled = useCanReview(value => value)
   const [failed, setFailed] = useState(false)
-  const detailRef = useRef<HTMLDivElement>(null)
   useEffect(() => visible ? watchJobs() : undefined, [visible, watchJobs])
-  useLayoutEffect(() => {
-    const column = detailRef.current?.closest('[data-rightbar-col]')
-    const frame = column?.parentElement
-    if (!visible || frame === undefined || frame === null) return
-    // Keep DSH's current left column and apply the Pen rail only to the
-    // selected, docked details page. The native layout preference is untouched.
-    const sync = (): void => {
-      const left = /^\d+(?:\.\d+)?px/.exec(frame.style.gridTemplateColumns)?.[0]
-      if (left === undefined) return
-      if (frame.style.getPropertyValue('--claude-details-left') !== left) frame.style.setProperty('--claude-details-left', left)
-      if (!frame.hasAttribute('data-claude-details-track')) frame.setAttribute('data-claude-details-track', '')
-    }
-    sync()
-    const observer = new MutationObserver(sync)
-    observer.observe(frame, { attributes: true, attributeFilter: ['style'] })
-    return () => {
-      observer.disconnect()
-      frame.removeAttribute('data-claude-details-track')
-      frame.style.removeProperty('--claude-details-left')
-    }
-  }, [visible])
   const done = todos.filter(item => item.status === 'completed').length
   const activeJobs = jobs?.filter(job => job.status === 'running' || job.status === 'stopping') ?? []
   const delivery = deliveryOf(turn)
   const files = delivery?.presented ?? []
   const changed = enabled ? delivery?.changes : undefined
-  const used = pressure?.projectedTokens ?? pressure?.pressureTokens
-  const capacity = pressure?.contextWindow
-  const percent = used !== undefined && capacity !== undefined && capacity > 0
-    ? Math.round(Math.max(0, Math.min(100, used / capacity * 100))) : undefined
   const act = (open: () => boolean): void => { setFailed(!open()) }
   if (!visible) return null
-  return <div ref={detailRef} className={css.details} data-claude-session-details="">
-    <h2>{t('details')}</h2>
-    {cwd !== undefined && <Section title={t('environment')}>
-      <div className={css.row}><IconBrowseOutlineRegular size={14} /><span title={cwd}>{workspace?.title ?? baseName(cwd)}</span></div>
-      <div className={css.directory} title={cwd}><span>{t('directory')}</span><code>{cwd}</code></div>
-      {openFiles !== undefined && <button type="button" className={css.link} onClick={() => act(openFiles)}>{t('files')}</button>}
-    </Section>}
+  return <div className={css.details} data-claude-session-details="" aria-label={t('details')}>
+    {cwd !== undefined && <section className={css.workspaceCard} aria-label={t('environment')}>
+      <header className={css.sectionHeader}><h3>{t('environment')}</h3></header>
+      <div className={css.workspaceTop}>
+        <span className={css.workspaceIcon}><IconBrowseOutlineRegular size={16} /></span>
+        <div className={css.workspaceTitle}><strong>{workspace?.title ?? baseName(cwd)}</strong></div>
+        {openFiles !== undefined && <button type="button" className={css.browseFiles} onClick={() => act(openFiles)} title={t('browseFiles')} aria-label={t('browseFiles')}><IconBrowseOutlineRegular size={14} /></button>}
+      </div>
+      <div className={css.directory}><code title={cwd}>{cwd}</code></div>
+    </section>}
+    <DetailsContext {...{ sessionId, pressure, breakdown, headers, timeline, contextText, openContextDetails }} />
     {todos.length > 0 && <Section title={t('tasks')} summary={t('progress', { done, total: todos.length })}>
       <ul>{todos.map((item, index) => <li className={css.row} key={`${index}:${item.content}`}>
         <span className={css.state} data-state={item.status} aria-label={t(item.status === 'completed' ? 'todoDone' : item.status === 'in_progress' ? 'todoActive' : 'todoPending')}>
@@ -286,19 +226,13 @@ function Details({ sessionId, useSessions, useWorkspaces, useSessionStatus, useP
         </button>
       </li>)}</ul>
     </Section>}
-    {percent !== undefined && <Section title={t('context')} summary={t('used', { percent })}>
-      <div className={css.meter} role="meter" aria-label={t('context')} aria-valuemin={0} aria-valuemax={100} aria-valuenow={percent}>
-        <span style={{ width: `${percent}%` }} />
-      </div>
-    </Section>}
-    {cwd === undefined && todos.length === 0 && pending === undefined && activeJobs.length === 0 && changed === undefined && files.length === 0 && percent === undefined
-      && <p className={css.secondary}>{t('unavailable')}</p>}
     {failed && <p role="status" className={css.secondary}>{t('openFailed')}</p>}
   </div>
 }
 
 /** Register the turn status and a session details page without changing DSH's pane ownership. */
 export function installTaskRuntime(ctx: Context): void {
+  installDetailsContextLocale(ctx)
   ctx.effect(() => ctx.locale.register('claude.runtime', { zh, en }), 'claude-ui: task runtime strings')
   const chatFor = (sessionId: SessionId): HostObservable<ChatSnapshot | undefined> => {
     const binding = ctx.sessions.binding(sessionId)
@@ -306,11 +240,8 @@ export function installTaskRuntime(ctx: Context): void {
   }
   ctx.slots.inject('conversation.input.dock', () => ctx.slots.register({
     name: 'conversation.input.dock', id: 'claude-ui.task-status', order: 100, locale: 'claude.runtime',
-    inject: (sessionId): StripFace => ({
-      hooks: { chat: chatFor(sessionId), connectionState: ctx.get('connection')?.state ?? noConnection },
-      stop: async () => {
-        try { await ctx.sessions.binding(sessionId)?.session.cancel() } catch { /* The Session owns the stop error. */ }
-      },
+    inject: (): StripFace => ({
+      hooks: { connectionState: ctx.get('connection')?.state ?? noConnection },
     }),
   }, props => <TaskStrip key={props.sessionId} {...props} />))
 
@@ -319,7 +250,6 @@ export function installTaskRuntime(ctx: Context): void {
     const right = scope.sidebarRight
     const tabs = scope.sidebarRightTabs
     const canReview = scope.configForms.developerTools.enabled ?? noReview
-    const offeredDetails = new Set<SessionId>()
     const navigate = (sessionId: SessionId, action: () => void): boolean => {
       if (right.mounted.getSnapshot() !== sessionId) return false
       try { action(); return true } catch { return false }
@@ -336,6 +266,7 @@ export function installTaskRuntime(ctx: Context): void {
         const jobs = scope.get('jobs') as IJobs | undefined
         return {
           ...fileNavigation(sessionId),
+          ...createDetailsContextActions(scope, sessionId),
           hooks: { chat: chatFor(sessionId), jobs: jobs?.state ?? emptyJobs, canReview },
           watchJobs: () => jobs?.watchRows(sessionId) ?? (() => {}),
           openFile: (cwd, path) => navigate(sessionId, () => right.openResource(fileAddressFor(sessionId, cwd, path))),
@@ -358,14 +289,7 @@ export function installTaskRuntime(ctx: Context): void {
       name: 'conversation.session.header.utilities', id: pane, order: -30, locale: 'claude.runtime',
       inject: (sessionId): HeaderFace => ({
         ...fileNavigation(sessionId), hooks: { chat: chatFor(sessionId), canReview },
-        openDetailsWhenReady: () => {
-          if (offeredDetails.has(sessionId) || !window.matchMedia('(min-width: 1120px)').matches) return
-          if (navigate(sessionId, () => {
-            if (!right.isExpanded()) right.openTab(pane)
-          })) offeredDetails.add(sessionId)
-        },
         openDetails: () => navigate(sessionId, () => {
-          offeredDetails.add(sessionId)
           if (right.isExpanded() && right.active()?.kind === pane) right.toggleExpanded()
           else right.openTab(pane)
         }),

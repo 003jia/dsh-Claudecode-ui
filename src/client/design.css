@@ -2,15 +2,15 @@
    controls, state, overlay behavior, and extension outlets. */
 html[data-dsh-claude-ui],
 html[data-dsh-claude-ui] body {
-  --claude-canvas: #f7f6f2;
-  --claude-sidebar: #efede7;
+  --claude-canvas: #fcfcfa;
+  --claude-sidebar: #f4f3f0;
   --claude-surface: #fffefa;
   --claude-surface-muted: #f0eee8;
   --claude-surface-raised: #ffffff;
   --claude-ink: #292722;
   --claude-secondary: #5f5b54;
   --claude-muted: #716b62;
-  --claude-border: #dedad2;
+  --claude-border: #e2e0da;
   --claude-border-strong: #c9c3b8;
   --claude-accent: #a2674d;
   --claude-accent-hover: #88533c;
@@ -137,6 +137,66 @@ html[data-dsh-claude-ui] body {
    by ui-layout. Painting the slot occupant also covers macOS vibrancy. */
 html[data-dsh-claude-ui] [data-slot='sidebar'] > div {
   background: var(--claude-sidebar);
+  font-size: 13px;
+}
+
+/* Keep native column geometry and let selection/hover follow the host theme. */
+html[data-dsh-claude-ui] [data-slot='sidebar'] {
+  --dsw-specific-sidebar-nav-item-active: var(--claude-selection);
+  --dsw-alias-interactive-bg-hover: var(--claude-hover);
+}
+
+/* Preserve the neutral light selection without masking the dark theme tokens. */
+html[data-dsh-claude-ui]:not(:has(body[data-ds-dark-theme])) [data-slot='sidebar'] {
+  --claude-selection: #e8e7e3;
+  --dsw-alias-interactive-bg-hover: rgba(28, 25, 20, 0.05);
+}
+
+html[data-dsh-claude-ui] [data-slot='sidebar'] nav button {
+  min-height: 30px;
+  padding: 4px 10px;
+  border-radius: 7px;
+  font-size: 13px;
+  line-height: 20px;
+}
+
+html[data-dsh-claude-ui] [data-slot='sidebar'] [data-row-key^='session:'] {
+  height: 30px;
+}
+
+html[data-dsh-claude-ui] [data-slot='sidebar'] [data-row-key^='workspace:'] {
+  height: 32px;
+}
+
+html[data-dsh-claude-ui] [data-slot='sidebar'] [data-row-key] {
+  font-size: 13px;
+}
+
+/* Native row titles carry their own 14px; the reference column reads at 13px. */
+html[data-dsh-claude-ui] [data-slot='sidebar'] [data-row-key^='session:'] > span:nth-of-type(2),
+html[data-dsh-claude-ui] [data-slot='sidebar'] [data-row-key^='workspace:'] > span:nth-of-type(3) > span {
+  font-size: 13px;
+  line-height: 20px;
+}
+
+html[data-dsh-claude-ui] [data-slot='sidebar.brand.name'] {
+  font-size: 15px;
+  line-height: 22px;
+}
+
+/* The right panel stays the native flush column; its contents own the
+   inspector layout. */
+
+/* The collapsed rail stays inside the native shrink animation; the floating
+   avatar is a separate delayed element (account menu), so the column fades
+   out in place instead of jumping. */
+html[data-dsh-claude-ui][data-platform='darwin'] [data-shell-leading] {
+  animation: claude-leading-in 140ms ease-out 120ms both;
+}
+
+@keyframes claude-leading-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 /* This direct child is the native New Session control, identified in the
@@ -144,16 +204,16 @@ html[data-dsh-claude-ui] [data-slot='sidebar'] > div {
    document flow, so visual order and keyboard order agree. */
 html[data-dsh-claude-ui] [data-dsh-claude-sidebar-wide] > button {
   justify-content: flex-start;
-  height: 36px;
-  margin: 0 0 6px;
-  padding: 7px 12px;
+  height: 30px;
+  margin: 0 0 4px;
+  padding: 4px 10px;
   border: 0;
-  border-radius: 9px;
+  border-radius: 7px;
   background: transparent;
   box-shadow: none;
   color: var(--claude-ink);
   font-size: 13px;
-  line-height: 22px;
+  line-height: 20px;
   font-weight: 400;
 }
 
@@ -167,21 +227,6 @@ html[data-dsh-claude-ui] [data-dsh-claude-sidebar-wide] > button > span:first-ch
   html[data-dsh-claude-ui] [data-dsh-claude-sidebar-wide] > button:hover {
     background: var(--claude-hover);
   }
-}
-
-html[data-dsh-claude-ui] [data-slot='sidebar.brand.name'] {
-  color: var(--claude-ink);
-  font-family: var(--claude-font-brand);
-  font-size: 25px;
-  line-height: 32px;
-  font-weight: 500;
-  letter-spacing: -0.6px;
-}
-
-/* The presenter marks only the native container occupied by our empty
-   glyph. If another contribution replaces it, :has stops matching. */
-html[data-dsh-claude-ui] [data-dsh-claude-sidebar-mark-seat]:has([data-dsh-claude-empty-mark]) {
-  display: none;
 }
 
 html[data-dsh-claude-ui] [data-slot='sidebar'] [data-row-key^='session:'][aria-selected='true'],
@@ -445,21 +490,7 @@ html[data-dsh-claude-ui] [data-shortcut-modal='settings'] [data-slot='settings.s
   }
 }
 
-/* Code running, approval, and delivery use the native chat surfaces. */
-@media (min-width: 1120px) {
-  html[data-dsh-claude-ui] [data-claude-details-track]:has(> [data-rightbar-col] [data-sidebar-right-panel='push'][data-sidebar-right-open] [data-dockkit-host='dock'] [data-claude-session-details]):not(:has(> [data-rightbar-col] [data-sidebar-right-open] [data-dockkit-split])) {
-    grid-template-columns: var(--claude-details-left) minmax(0, 1fr) 312px !important;
-  }
-
-  html[data-dsh-claude-ui] [data-claude-details-track] [data-sidebar-right-panel='push'][data-sidebar-right-open]:not(:has([data-dockkit-split])):has([data-dockkit-host='dock'] [data-claude-session-details]) {
-    width: 312px !important;
-  }
-
-  html[data-dsh-claude-ui] [data-claude-details-track]:has(> [data-rightbar-col] [data-sidebar-right-panel='push'][data-sidebar-right-open] [data-dockkit-host='dock'] [data-claude-session-details]):not(:has(> [data-rightbar-col] [data-sidebar-right-open] [data-dockkit-split])) > [data-side='rightbar'] {
-    display: none;
-  }
-}
-
+/* Code v2 preserves the native column and resize owners. */
 html[data-dsh-claude-ui] [data-conversation-content][data-content-phase='active'] {
   --dsh-composer-card-max-width: var(--dsh-chat-content-width);
 }
@@ -475,12 +506,6 @@ html[data-dsh-claude-ui] [data-content-phase='active'] [data-composer-card] {
 
 html[data-dsh-claude-ui] [data-content-phase='active'] [data-composer-card] [data-composer-input] {
   min-height: 30px;
-}
-
-/* The status strip moves the native cancel path above the composer. Match the
-   original square stop glyph so send, queue, and plugin controls remain. */
-html[data-dsh-claude-ui] [data-composer-seat]:has([data-claude-task-stop]) [data-composer-card] button:has(> svg[viewBox='0 0 16 16'] > rect[x='3'][y='3'][width='10'][height='10']) {
-  display: none;
 }
 
 html[data-dsh-claude-ui]:has([data-sidebar-right-open] [data-claude-session-details]) [data-conversation-content] [data-testid='todo-panel'] {
@@ -617,29 +642,7 @@ html[data-dsh-claude-ui] [data-composer-seat] [data-approval-scroll] + div > but
   }
 }
 
-/* 08 · Give the actual closing prose a result surface when the native turn
-   tail has changed files or declared deliveries. Keep wide tables on their
-   native breakout layout. */
-html[data-dsh-claude-ui] [data-conversation-content]
-  [data-chat-flow-kind='assistant-step']:not([hidden]):has(+ [data-chat-flow-kind='turn-tail'] [data-turn-tail][data-actions-reveal] > [data-slot='conversation.chat.turnTail'] :is([data-changed-files], [data-presented-files-row]))
-  > [data-slot='conversation.chat.node'] > div:not([data-streaming]) > div
-  > [data-text-interaction-source]:nth-last-child(1 of [data-text-interaction-source]):not(:has(.md-table-wide)) {
-  box-sizing: border-box;
-  min-block-size: 78px;
-  padding: 14px;
-  border: 1px solid var(--claude-border);
-  border-radius: 10px;
-  background: var(--claude-surface);
-
-  > :first-child:has(+ p) {
-    margin-block-end: 8px;
-  }
-
-  > :first-child + p {
-    margin-block-start: 8px;
-  }
-}
-
+/* Closing prose stays in the native continuous Markdown flow. */
 /* The compact actions retain the original preview anchors, file rows,
    delivery status, and contributed menus. */
 html[data-dsh-claude-ui] [data-conversation-content] [data-turn-tail]:has(> [data-slot='conversation.chat.turnTail'] :is([data-changed-files], [data-presented-files-row])) {

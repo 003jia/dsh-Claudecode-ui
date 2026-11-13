@@ -1,0 +1,67 @@
+/* The marker exists only for the verified native compact shape. The control
+   row remains a real box so its model-width observer and keyboard order survive. */
+html[data-dsh-claude-ui] [data-content-phase='active'] [data-composer-card][data-claude-composer-v2] {
+  padding: 0;
+  gap: 7px;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+html[data-dsh-claude-ui] [data-content-phase='active'] [data-claude-composer-v2] > [data-input-scroll] {
+  box-sizing: border-box;
+  min-height: 58px;
+  margin: 0;
+  border-radius: 18px;
+  background: var(--claude-surface-raised, var(--dsw-specific-input-major));
+  box-shadow: inset 0 0 0 1px var(--claude-border, var(--dsw-alias-border-l2));
+}
+
+html[data-dsh-claude-ui] [data-content-phase='active'] [data-claude-composer-v2] [data-composer-input] {
+  min-height: 58px;
+  padding: 16px 54px 16px 46px;
+  font-size: var(--dsh-content-font-size, 15px);
+  line-height: 26px;
+}
+
+html[data-dsh-claude-ui] [data-content-phase='active'] [data-claude-composer-v2] [data-composer-placeholder] {
+  inset: 16px 54px auto 46px;
+  line-height: 26px;
+}
+
+html[data-dsh-claude-ui] [data-content-phase='active'] [data-claude-composer-v2] > [data-input-scroll] + div {
+  min-height: 28px;
+  padding: 0 4px;
+  gap: 8px;
+  /* Keep absolute buttons anchored to the card, not the row's containment box.
+     The native measured model collapse and flex wrapping still own overflow. */
+  container-type: normal;
+}
+
+/* Only the native + trigger leaves the measured tools row. Extension controls,
+   permissions and mode chips remain in their normal, wrapping flex flow. */
+html[data-dsh-claude-ui] [data-content-phase='active'] [data-claude-composer-v2] > [data-input-scroll] + div > div:first-child > button[aria-haspopup='listbox'] {
+  position: absolute;
+  inset: 15px auto auto 10px;
+  width: 28px;
+  height: 28px;
+  background: transparent;
+}
+
+/* canCompact accepts exactly one direct native primary button. It never drops
+   a separate Stop action or changes its owner-supplied disabled/pending state. */
+html[data-dsh-claude-ui] [data-content-phase='active'] [data-claude-composer-v2] > [data-input-scroll] + div > div:last-child > button {
+  position: absolute;
+  inset: 14px 12px auto auto;
+  width: 30px;
+  height: 30px;
+  transform: none;
+  background: var(--claude-ink, var(--dsw-alias-label-primary));
+  color: var(--claude-canvas, var(--dsw-alias-label-primary-inverted));
+}
+
+@media (hover: hover) {
+  html[data-dsh-claude-ui] [data-content-phase='active'] [data-claude-composer-v2] > [data-input-scroll] + div > div:last-child > button:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--claude-ink, var(--dsw-alias-label-primary)) 85%, var(--claude-canvas, var(--dsw-alias-bg-base)));
+  }
+}

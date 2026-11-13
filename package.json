@@ -1,6 +1,6 @@
 {
   "name": "dsh-claude-ui",
-  "version": "0.1.7",
+  "version": "0.1.11",
   "description": "Claude 风格 DSH 界面：会话、项目、模型、设置与插件扩展 / Claude-inspired DSH interface",
   "type": "module",
   "license": "MIT",
@@ -30,7 +30,7 @@
   "scripts": {
     "build": "node scripts/build.mjs",
     "typecheck": "node scripts/build.mjs --types-only",
-    "test": "node --test tests/mode-catalog.test.ts"
+    "test": "node --test tests/*.test.ts tests/*.test.mjs"
   },
   "peerDependencies": {
     "@deepseek-ai/cordis": "4.0.6-alpha.1",

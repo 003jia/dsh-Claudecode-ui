@@ -145,6 +145,8 @@ export function installAccountMenu(ctx: Context): void {
     let updateLabel: HTMLSpanElement | null = null
     let notice: HTMLParagraphElement | null = null
     let languageVersion = ''
+    let floating: HTMLButtonElement | null = null
+    let avatarMarkup: string | undefined
     const themeButtons = new Map<'light' | 'dark', HTMLButtonElement>()
     const close = (): void => { if (trigger?.getAttribute('aria-expanded') === 'true') trigger.click() }
     const persist = async (operation: () => Promise<boolean>): Promise<void> => {
@@ -164,6 +166,9 @@ export function installAccountMenu(ctx: Context): void {
       trigger?.removeAttribute('data-dsh-claude-account')
       content?.remove(); trigger = null; content = null
     }
+    const clearFloating = (): void => {
+      floating?.remove(); floating = null; avatarMarkup = undefined
+    }
     const row = (kind: Parameters<typeof icon>[0]): { button: HTMLButtonElement; label: HTMLSpanElement } => {
       const button = node('button', css.row); button.type = 'button'; button.setAttribute('role', 'menuitem')
       const label = node('span', css.rowLabel); button.append(icon(kind), label)
@@ -173,10 +178,41 @@ export function installAccountMenu(ctx: Context): void {
       if (!alive) return
       const next = document.querySelector<HTMLButtonElement>(triggerSelector)
       if (next !== trigger) { clearMenu(); clearTrigger(); trigger = next }
-      if (trigger === null) return
+      if (trigger === null) { clearFloating(); return }
       const signedOut = trigger.getAttribute('data-signed-out') === 'true'
       const nativeLabel = [...trigger.children].find(child => child.tagName === 'SPAN' && (child.textContent?.trim().length ?? 0) > 0 && !child.hasAttribute('data-avatar-status') && !child.hasAttribute('data-dsh-claude-account-owned'))
       const identity: Identity = { signedOut, name: (!signedOut ? nativeLabel?.textContent?.trim() : '') || preferences.getSnapshot().value?.displayName.trim() || t(signedOut ? 'local' : 'personal') }
+      const collapsed = document.documentElement.getAttribute('data-platform') === 'darwin'
+        && document.querySelector('[data-sidebar-collapsed]') !== null
+      if (!collapsed) {
+        clearFloating()
+      } else {
+        if (floating === null) {
+          floating = node('button', css.floatingAvatar)
+          floating.type = 'button'
+          floating.setAttribute('data-dsh-claude-floating-account', '')
+          floating.setAttribute('aria-label', t('menu'))
+          floating.addEventListener('click', () => {
+            document.querySelector<HTMLButtonElement>(triggerSelector)?.click()
+          })
+          document.body.append(floating)
+        }
+        const avatar = trigger.querySelector<HTMLElement>('[data-avatar-status]')
+        const markup = avatar?.outerHTML ?? ''
+        if (markup !== avatarMarkup) {
+          avatarMarkup = markup
+          floating.replaceChildren()
+          if (avatar !== null) {
+            const clone = avatar.cloneNode(true) as HTMLElement
+            clone.setAttribute('aria-hidden', 'true')
+            floating.append(clone)
+          } else {
+            const fallback = node('span', css.floatingInitial)
+            text(fallback, Array.from(identity.name)[0]?.toLocaleUpperCase() ?? 'D')
+            floating.append(fallback)
+          }
+        }
+      }
       if (content === null) {
         content = node('span', css.triggerContent); content.setAttribute('data-dsh-claude-account-owned', ''); content.setAttribute('aria-hidden', 'true')
         initial = node('span', css.initial)
@@ -258,9 +294,9 @@ export function installAccountMenu(ctx: Context): void {
       text(notice!, failure ? t('failed') : busy ? t('saving') : ''); notice!.hidden = !failure && !busy
     }
     const observer = new MutationObserver(sync)
-    observer.observe(document.body, { childList: true, characterData: true, subtree: true, attributes: true, attributeFilter: ['data-signed-out', 'data-avatar-status', 'data-collapsed', 'aria-expanded'] })
+    observer.observe(document.body, { childList: true, characterData: true, subtree: true, attributes: true, attributeFilter: ['data-signed-out', 'data-avatar-status', 'data-collapsed', 'data-sidebar-collapsed', 'aria-expanded'] })
     const unsubscribers = [preferences.subscribe(sync), appearance.subscribe(sync), language.subscribe(sync), ctx.locale.subscribe(sync), ctx.on('theme/change', sync), connection?.state.subscribe(sync)]
     sync()
-    return () => { alive = false; observer.disconnect(); for (const unsubscribe of unsubscribers) unsubscribe?.(); clearMenu(); clearTrigger() }
+    return () => { alive = false; observer.disconnect(); for (const unsubscribe of unsubscribers) unsubscribe?.(); clearMenu(); clearTrigger(); clearFloating() }
   }, 'claude-ui: native account presentation')
 }

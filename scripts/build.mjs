@@ -53,15 +53,12 @@ if (types.status !== 0) process.exit(types.status ?? 1)
 if (!process.argv.includes('--types-only')) {
   const bundle = spawnSync(join(source, 'node_modules/.bin/tsdown'), ['--config', join(root, 'tsdown.config.ts')], { cwd: root, stdio: 'inherit' })
   if (bundle.status !== 0) process.exit(bundle.status ?? 1)
-
-  // Rolldown labels virtual CSS modules with absolute paths. Make those
-  // labels portable while preserving source-map line positions.
-  const clientPath = join(root, 'lib/client.js')
-  const client = readFileSync(clientPath, 'utf8')
-  const portable = client.replace(
-    /^([ \t]*\/\/#region \\0dsh-(?:inline-|global-)?css:)([^\r\n]+)$/gm,
-    (_label, prefix, file) => prefix + relative(root, file).replaceAll('\\', '/'),
-  )
-  if (portable !== client) writeFileSync(clientPath, portable)
+  // Virtual CSS module labels are build diagnostics, not runtime paths.
+  // Keep the distributable portable without changing executable strings.
+  const clientFile = join(root, 'lib/client.js')
+  const client = readFileSync(clientFile, 'utf8')
+  writeFileSync(clientFile, client.split('\n').map(line =>
+    /^\s*\/\/#region .*dsh-(?:inline-)?css:/.test(line)
+      ? line.replace(root + '/', '') : line).join('\n'))
 }
 console.log('Built dsh-claude-ui against', relative(root, source))
