@@ -11,6 +11,7 @@ import type { ConfigForm } from '@deepseek-ai/dsh-client-ui-settings/client'
 import type { InjectFace, PropsLocale, PropsRuntime } from '@deepseek-ai/dsh-client-ui-slots'
 import { openNativeSettingsSection } from './account-menu.tsx'
 import css from './mode-menu.module.css'
+import { mountHomeModes, type HomeModeMount } from './task-settings.ts'
 
 type Mode = 'standard' | 'create'
 const zh = {
@@ -57,7 +58,7 @@ function Glyph({ kind, size = 18 }: { kind: Mode | 'plus' | 'chevron' | 'check';
   </svg>
 }
 
-function Dropdown({ usePreferences, useModeCatalog, saveMode, loadModes, selectPreset, displayPreset, openCustom, t, wide }: Props & { wide: boolean }) {
+function Dropdown({ usePreferences, useModeCatalog, saveMode, loadModes, selectPreset, displayPreset, openCustom, t, wide, home = false }: Props & { wide: boolean; home?: boolean }) {
   const preferences = usePreferences(value => value)
   const state = useModeCatalog(value => value)
   const [open, setOpen] = useState(false)
@@ -94,7 +95,9 @@ function Dropdown({ usePreferences, useModeCatalog, saveMode, loadModes, selectP
   return <>
     <Menu open={open} onClose={() => { setOpen(false) }} portal minWidthFromAnchor compact
       className={css.anchor} listClassName={css.menu}
-      anchor={<button type="button" className={css.trigger} data-dsh-claude-mode-trigger=""
+      anchor={<button type="button" className={css.trigger} data-dsh-claude-mode-trigger={home ? undefined : ''}
+        data-dsh-claude-home-mode-trigger={home ? '' : undefined}
+        title={`${t('label')}：${label}`}
         aria-label={`${t('label')}：${label}`} aria-haspopup="menu" aria-expanded={open}
         aria-disabled={state.busy || undefined} aria-busy={state.busy}
         onClick={() => { if (!state.busy) { setOpen(!open); if (!open) void loadModes() } }}>
@@ -181,6 +184,19 @@ function SidebarModes(props: Props) {
   return <>{mounts.map(mount => createPortal(<Dropdown {...props} wide={mount.wide} />, mount.node, String(mount.id)))}</>
 }
 
+/** Share the sidebar catalog once a session exists; retain native staging on cold start. */
+function HomeModes(props: Props) {
+  const sessionId = props.useModeCatalog(state => state.sessionId)
+  const [mounts, setMounts] = useState<HomeModeMount[]>([])
+  useEffect(() => mountHomeModes(setMounts), [])
+  return <>{mounts.map(mount => createPortal(sessionId === null ? null
+    : <Dropdown {...props} wide home />, mount.node, String(mount.id)))}</>
+}
+
+function ModeMenus(props: Props) {
+  return <><SidebarModes {...props} /><HomeModes {...props} /></>
+}
+
 /** Show the Host's complete preset roster and preserve its real selection boundaries. */
 export function installModeMenu(ctx: Context): void {
   ctx.effect(() => ctx.locale.register('claude.modes', { zh, en }), 'claude-ui: mode menu dictionaries')
@@ -194,5 +210,5 @@ export function installModeMenu(ctx: Context): void {
       saveMode: mode => preferences.set('mode', mode), loadModes: catalog.load, selectPreset: catalog.select,
       displayPreset: preset => presetDisplayText(preset, nativeCopy),
       openCustom: () => openNativeSettingsSection(ctx, 'agent-presets') }),
-  }, SidebarModes))
+  }, ModeMenus))
 }

@@ -11,8 +11,8 @@ import type { ConfigForm } from '@deepseek-ai/dsh-client-ui-settings/client'
 import type { InjectFace, PropsLocale, PropsRuntime } from '@deepseek-ai/dsh-client-ui-slots'
 import { FishLogo } from '@deepseek-ai/dsh-client-ui-primitives'
 import css from './shell.module.css'
-import { hideHomeTaskSettings } from './task-settings.ts'
 import { installModeMenu } from './mode-menu.tsx'
+import { reportContract } from './diagnostics.ts'
 
 type Mode = 'standard' | 'create'
 type Width = 'narrow' | 'medium' | 'wide'
@@ -185,6 +185,7 @@ function installAnchors(): () => void {
     for (const welcome of document.querySelectorAll<HTMLElement>('[data-dsh-claude-welcome]')) {
       const brandSeat = welcome.closest('[data-slot="conversation.hero.brand.mark"]')?.parentElement
       const headline = brandSeat?.parentElement
+      reportContract('conversation.hero.brand.mark', brandSeat != null)
       mark(brandSeat, 'data-dsh-claude-brand-seat')
       mark(headline, 'data-dsh-claude-headline')
       mark(headline?.parentElement?.parentElement, 'data-dsh-claude-hero-welcome')
@@ -197,8 +198,10 @@ function installAnchors(): () => void {
         }
       }
       let ancestor = headline?.parentElement ?? null
+      let foundHeroStack = false
       while (ancestor !== null && !ancestor.hasAttribute('data-composer-seat')) {
         if (Array.from(ancestor.children).some(child => child.matches('[data-slot="conversation.composer.bar"]'))) {
+          foundHeroStack = true
           mark(ancestor, 'data-dsh-claude-hero-stack')
           const workspaceRow = ancestor.querySelector<HTMLElement>('[data-slot="conversation.hero.workspace"]')?.parentElement
           mark(workspaceRow, 'data-dsh-claude-workspace-row')
@@ -208,6 +211,7 @@ function installAnchors(): () => void {
         }
         ancestor = ancestor.parentElement
       }
+      reportContract('conversation.composer.bar in hero', foundHeroStack)
     }
     for (const tools of document.querySelectorAll<HTMLElement>('[data-dsh-claude-hero-tools]')) {
       const options = tools.closest('[data-slot="conversation.hero.options"]')?.parentElement
@@ -246,11 +250,9 @@ export function installShell(ctx: Context): void {
     update()
     const unsubscribe = preferences.subscribe(update)
     const removeAnchors = installAnchors()
-    const restoreTaskSettings = hideHomeTaskSettings()
     return () => {
       unsubscribe()
       removeAnchors()
-      restoreTaskSettings()
       if (previousMode === null) root.removeAttribute('data-dsh-claude-mode')
       else root.setAttribute('data-dsh-claude-mode', previousMode)
       if (previousWidth === null) root.removeAttribute('data-dsh-claude-width')

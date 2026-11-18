@@ -1,4 +1,11 @@
-/* Only the inspected native menu anchor is removed from the home layout. */
-.hiddenAnchor {
+/* Keep native staging before a workspace/session exists. Once the shared
+   mode menu is mounted, hide only the original button's inspected anchor. */
+.nativeAnchor:has(~ .homeMount:not(:empty)) {
   display: none !important;
 }
+.homeMount {
+  flex: 0 1 200px;
+  min-width: 0;
+  max-width: 100%;
+}
+.homeMount:empty { display: none; }

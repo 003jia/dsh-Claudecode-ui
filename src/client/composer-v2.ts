@@ -1,5 +1,7 @@
 /** Reversible presentation markers for the native, fully mounted composer. */
 import type { Context } from '@deepseek-ai/cordis'
+import { reportContract } from './diagnostics.ts'
+import { installToolbarAlignment } from './toolbar-layout.ts'
 
 const MARKER = 'data-claude-composer-v2'
 
@@ -22,9 +24,10 @@ export function installComposerLayout(doc: Document): () => void {
     else card.setAttribute(MARKER, previous)
   }
   const canCompact = (card: HTMLElement): boolean => {
-    if (card.getBoundingClientRect().width < 600) return false
+    if (card.getBoundingClientRect().width < 340) return false
     const scroll = card.querySelector(':scope > [data-input-scroll]')
-    if (!(scroll instanceof win.HTMLElement) || scroll.querySelector('[data-composer-input]') === null) return false
+    if (!(scroll instanceof win.HTMLElement)) { reportContract('composer input scroll', false, '[data-input-scroll]'); return false }
+    if (scroll.querySelector('[data-composer-input]') === null) { reportContract('composer input', false, '[data-composer-input]'); return false }
     const row = scroll.nextElementSibling
     if (!(row instanceof win.HTMLElement) || row.tagName !== 'DIV' || row.children.length !== 2) return false
     const [tools, trailing] = Array.from(row.children)
@@ -84,4 +87,5 @@ export function installComposerLayout(doc: Document): () => void {
 /** Add layout markers without replacing the native editor or any input slots. */
 export function installComposerV2(ctx: Context): void {
   ctx.effect(() => installComposerLayout(document), 'claude-ui: native composer presentation')
+  ctx.effect(() => installToolbarAlignment(document), 'claude-ui: toolbar alignment')
 }

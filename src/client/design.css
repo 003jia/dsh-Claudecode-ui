@@ -27,6 +27,8 @@ html[data-dsh-claude-ui] body {
   --claude-font-brand: 'Lora', Georgia, 'Times New Roman', serif;
   --claude-font-code: 'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace;
   --claude-content-width: 820px;
+  --claude-floating-account-size: 46px;
+  --claude-floating-account-inset: 8px;
 
   --dsw-alias-bg-base: var(--claude-canvas);
   --dsw-alias-bg-sidebar: var(--claude-sidebar);
@@ -249,6 +251,15 @@ html[data-dsh-claude-ui][data-dsh-claude-width='wide'] [data-conversation-conten
   --claude-content-width: 1040px;
 }
 
+/* Both sidebars collapsed: use the freed width instead of the preferred column.
+   Narrow viewports keep the native mobile width rules. */
+@media (min-width: 768px) {
+  html[data-dsh-claude-ui]:has([data-sidebar-collapsed]):not(:has([data-sidebar-right-open])) [data-conversation-content] {
+    --dsh-chat-content-width: min(calc(100% - 48px), max(var(--dsh-chat-user-width, 0px), 1120px));
+    --dsh-composer-card-max-width: calc(var(--dsh-chat-content-width) + 24px);
+  }
+}
+
 html[data-dsh-claude-ui] [data-composer-card] {
   border: 0;
   border-radius: 18px;
@@ -269,17 +280,108 @@ html[data-dsh-claude-ui] [data-composer-placeholder] {
   color: var(--claude-muted);
 }
 
-html[data-dsh-claude-ui] [data-composer-dock] {
-  flex-wrap: wrap;
-  row-gap: 6px;
+/* The normal dock remains in flow for narrow cards, attachments and activity. */
+html[data-dsh-claude-ui] [data-composer-seat] {
+  --claude-composer-foot-pad: 6px;
+}
+html[data-dsh-claude-ui] [data-composer-seat] > div:has(> [data-claude-composer-v2]) {
+  position: relative;
 }
 
-html[data-dsh-claude-ui] [data-composer-dock]:has([data-dsh-claude-context-meter]) {
+/* Preserve the centered composer when it already clears the floating avatar.
+   As the column narrows, increase only the left inset to clear its hit area. */
+html[data-dsh-claude-ui]:has(> body > [data-dsh-claude-floating-account])
+  [data-sidebar-collapsed] [data-content-phase='active'] [data-composer-seat] div:has(> [data-composer-card]) {
+  --claude-account-clearance: calc(var(--claude-floating-account-inset) + var(--claude-floating-account-size) + 10px);
+  padding-left: clamp(
+    var(--dsh-composer-side-clearance),
+    calc(2 * var(--claude-account-clearance) + var(--dsh-composer-side-clearance) + var(--dsh-composer-card-max-width) - 100%),
+    var(--claude-account-clearance)
+  );
+}
+
+html[data-dsh-claude-ui] [data-composer-dock] {
   position: relative;
   box-sizing: border-box;
+  flex-wrap: wrap;
   width: min(100%, var(--dsh-composer-card-max-width));
+  max-width: 100%;
   min-height: 28px;
-  padding-inline: 30px;
+  padding: 4px 8px 0;
+  gap: 4px 8px;
+  min-width: 0;
+}
+
+html[data-dsh-claude-ui] [data-composer-dock] > * { min-width: 0; }
+
+html[data-dsh-claude-ui] [data-composer-dock] [data-composer-stat] svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Keep the interactive dock centered on the measured row. The transparent
+   overlay must never intercept permission or model clicks. */
+html[data-dsh-claude-ui] [data-claude-composer-v2][data-claude-toolbar-aligned] ~ [data-composer-dock] {
+  position: absolute;
+  left: var(--claude-toolbar-left);
+  top: var(--claude-toolbar-top);
+  z-index: 2;
+  width: var(--claude-toolbar-width);
+  max-width: none;
+  height: var(--claude-toolbar-height, 28px);
+  min-height: 28px;
+  padding: 0;
+  flex-wrap: nowrap;
+  pointer-events: none;
+}
+html[data-dsh-claude-ui] [data-claude-composer-v2][data-claude-toolbar-aligned] ~ [data-composer-dock] > *,
+html[data-dsh-claude-ui] [data-claude-composer-v2][data-claude-toolbar-aligned] ~ [data-composer-dock] [data-slot='conversation.composer.dock'] > * {
+  pointer-events: auto;
+}
+html[data-dsh-claude-ui] [data-claude-composer-v2][data-claude-toolbar-aligned] ~ [data-composer-dock] [data-slot='conversation.composer.dock'] {
+  position: static;
+}
+html[data-dsh-claude-ui] [data-claude-composer-v2][data-claude-toolbar-aligned] ~ [data-composer-dock] [data-composer-stat] {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+html[data-dsh-claude-ui] [data-claude-composer-v2][data-claude-toolbar-aligned] ~ [data-composer-dock] [data-composer-stat='activity'] {
+  left: calc(var(--claude-tools-end) + 12px);
+}
+html[data-dsh-claude-ui] [data-claude-composer-v2][data-claude-toolbar-aligned] ~ [data-composer-dock] [data-composer-stat='usage'] {
+  left: calc(var(--claude-tools-end) + 12px);
+}
+html[data-dsh-claude-ui] [data-claude-composer-v2][data-claude-toolbar-aligned] ~ [data-composer-dock]:has([data-composer-stat='activity']) [data-composer-stat='usage'] {
+  /* 28px hit target, then 4px between the two readings. */
+  left: calc(var(--claude-tools-end) + 44px);
+}
+html[data-dsh-claude-ui] [data-claude-composer-v2][data-claude-toolbar-aligned] ~ [data-composer-dock] [data-dsh-claude-context-meter] {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  bottom: auto;
+  transform: translateY(-50%);
+}
+html[data-dsh-claude-ui] [data-claude-composer-v2]:has(+ [data-composer-dock] [data-dsh-claude-context-meter]) [data-slot='conversation.input.model'] button {
+  margin-right: 24px;
+}
+/* The clipped native label still powers the complete reading on hover. */
+html[data-dsh-claude-ui] [data-claude-composer-v2][data-claude-toolbar-aligned] ~ [data-composer-dock] [data-composer-stat] > :is(span, button) > span:last-child,
+html[data-dsh-claude-ui] [data-claude-composer-v2][data-claude-toolbar-aligned] ~ [data-composer-dock] [data-composer-stat] [class*='label'] {
+  display: inline-block;
+  width: 0;
+  min-width: 0;
+  overflow: hidden;
+  opacity: 0;
+  white-space: nowrap;
+}
+html[data-dsh-claude-ui] [data-claude-composer-v2][data-claude-toolbar-aligned] ~ [data-composer-dock] [data-composer-stat] > :is(span, button) {
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  gap: 0;
 }
 
 /* The native meter remains the fallback where the session slot is absent. */
@@ -325,7 +427,7 @@ html[data-dsh-claude-ui] [data-dsh-claude-native-title] {
 }
 
 html[data-dsh-claude-ui] [data-dsh-claude-workspace-row] {
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 6px 12px;
   width: var(--dsh-chat-content-width);
   max-width: calc(100% - 24px);
@@ -335,12 +437,21 @@ html[data-dsh-claude-ui] [data-dsh-claude-workspace-row] {
 }
 
 html[data-dsh-claude-ui] [data-dsh-claude-options] {
-  flex: 0 1 auto;
-  flex-wrap: wrap;
+  flex: 0 0 auto;
+  flex-wrap: nowrap;
   gap: 6px 10px;
   min-width: 0;
   max-width: 100%;
   margin: 0;
+  margin-inline-start: auto;
+}
+
+/* The branch picker expands toward the left; the worktree checkbox stays at
+   the row's trailing edge when modes or optional plugin entries change. */
+html[data-dsh-claude-ui] [data-dsh-claude-options] [data-forge-worktree] {
+  order: 100;
+  margin-inline-start: auto;
+  flex: none;
 }
 
 /* Project selection lives in the native sidebar. Keep its original anchor
@@ -740,4 +851,40 @@ html[data-dsh-claude-ui] [data-conversation-content] [data-slot='conversation.ch
 html[data-dsh-claude-ui] [data-conversation-content] [data-slot='conversation.chat.turnTail'] [data-presented-description][role='status'] {
   white-space: normal;
   overflow-wrap: anywhere;
+}
+
+/* Uniform interface type scale: every interface label matches the native
+   sidebar's 13px. Markdown headings, code, the home hero and the terminal
+   keep their own metrics so reading hierarchy and terminal cell geometry
+   stay intact. */
+html[data-dsh-claude-ui] body,
+html[data-dsh-claude-ui] body :not(
+  svg,
+  svg *,
+  .xterm,
+  .xterm *,
+  pre,
+  pre *,
+  code,
+  code *,
+  kbd,
+  kbd *,
+  samp,
+  samp *,
+  h1,
+  h1 *,
+  h2,
+  h2 *,
+  h3,
+  h3 *,
+  h4,
+  h4 *,
+  h5,
+  h5 *,
+  h6,
+  h6 *,
+  [data-dsh-claude-headline],
+  [data-dsh-claude-headline] *
+) {
+  font-size: 13px !important;
 }

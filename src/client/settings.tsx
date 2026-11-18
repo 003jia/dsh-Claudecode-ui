@@ -7,6 +7,7 @@ import type { ThemeSettings } from '@deepseek-ai/dsh-client-ui-theme/client'
 import type { InjectFace, PropsLocale, PropsRuntime } from '@deepseek-ai/dsh-client-ui-slots'
 import type {} from '@deepseek-ai/dsh-client-ui-renderer/client'
 import css from './settings.module.css'
+import { reportContract } from './diagnostics.ts'
 
 const en = {
   appearance: 'Appearance', appearanceHint: 'Make this space feel like yours.',
@@ -260,7 +261,10 @@ export function installSettings(ctx: Context): void {
       const finish = (success: boolean) => {
         if (settled) return
         settled = true; observer.disconnect(); window.clearTimeout(timeout); pendingNavigation.delete(cancel)
-        if (success) resolve(); else reject(new Error(t('navigationFailed')))
+        if (success) resolve(); else {
+          reportContract('settings.section nav label', false, label)
+          reject(new Error(t('navigationFailed')))
+        }
       }
       const seek = () => {
         const panel = document.querySelector('[data-shortcut-modal="settings"]')

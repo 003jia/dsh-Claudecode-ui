@@ -7,6 +7,7 @@ import type {} from '@deepseek-ai/dsh-client-locale/client'
 import type { LocaleSettings } from '@deepseek-ai/dsh-client-locale/client'
 import type { ThemeSettings } from '@deepseek-ai/dsh-client-ui-theme/client'
 import css from './account-menu.module.css'
+import { reportContract } from './diagnostics.ts'
 
 const zh = {
   menu: '账户菜单', personal: '个人账户', local: '本地工作区', signedOut: '未登录',
@@ -105,7 +106,10 @@ export function openNativeSettingsSection(ctx: Context, id: string): Promise<voi
       if (rows.length === 1) { requestedSettings = true; rows[0]!.click() }
     }
     const observer = new MutationObserver(seek)
-    const timeout = window.setTimeout(() => { finish(false) }, 2000)
+    const timeout = window.setTimeout(() => {
+      reportContract('settings launcher or account menu', false, triggerSelector)
+      finish(false)
+    }, 2000)
     releaseNavigation = ctx.effect(() => () => { finish(false) }, 'claude-ui: bounded settings navigation')
     observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['aria-expanded'] })
     seek()

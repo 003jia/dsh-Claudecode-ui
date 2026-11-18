@@ -1,67 +1,99 @@
 /* The marker exists only for the verified native compact shape. The control
    row remains a real box so its model-width observer and keyboard order survive. */
 html[data-dsh-claude-ui] [data-content-phase='active'] [data-composer-card][data-claude-composer-v2] {
-  padding: 0;
-  gap: 7px;
+  padding: 0 0 var(--claude-composer-foot-pad, 6px);
+  gap: 4px;
   border: 0;
-  background: transparent;
-  box-shadow: none;
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--claude-surface-muted) 34%, var(--claude-surface-raised));
+  box-shadow: 0 0 0 1px var(--claude-border), 0 2px 6px var(--claude-shadow-color);
+}
+
+html[data-dsh-claude-ui] [data-content-phase='active'] [data-composer-card][data-claude-composer-v2]:has([data-composer-input]:focus) {
+  box-shadow: 0 0 0 1px var(--claude-border-strong), 0 2px 6px var(--claude-shadow-color);
 }
 
 html[data-dsh-claude-ui] [data-content-phase='active'] [data-claude-composer-v2] > [data-input-scroll] {
   box-sizing: border-box;
-  min-height: 58px;
+  min-height: 52px;
   margin: 0;
-  border-radius: 18px;
+  border-radius: 16px 16px 0 0;
   background: var(--claude-surface-raised, var(--dsw-specific-input-major));
-  box-shadow: inset 0 0 0 1px var(--claude-border, var(--dsw-alias-border-l2));
+  box-shadow: inset 0 -1px color-mix(in srgb, var(--claude-border) 52%, transparent);
 }
 
 html[data-dsh-claude-ui] [data-content-phase='active'] [data-claude-composer-v2] [data-composer-input] {
-  min-height: 58px;
-  padding: 16px 54px 16px 46px;
+  min-height: 52px;
+  padding: 13px 54px 13px 52px;
   font-size: var(--dsh-content-font-size, 15px);
   line-height: 26px;
 }
 
 html[data-dsh-claude-ui] [data-content-phase='active'] [data-claude-composer-v2] [data-composer-placeholder] {
-  inset: 16px 54px auto 46px;
+  inset: 13px 54px auto 52px;
   line-height: 26px;
 }
 
 html[data-dsh-claude-ui] [data-content-phase='active'] [data-claude-composer-v2] > [data-input-scroll] + div {
   min-height: 28px;
-  padding: 0 4px;
+  padding: 0 8px;
   gap: 8px;
+  flex-wrap: wrap;
   /* Keep absolute buttons anchored to the card, not the row's containment box.
      The native measured model collapse and flex wrapping still own overflow. */
   container-type: normal;
+}
+
+html[data-dsh-claude-ui] [data-content-phase='active'] [data-claude-composer-v2] > [data-input-scroll] + div > div:first-child {
+  column-gap: 4px;
+}
+
+/* The native row uses column-gap when deciding whether to show the model
+   label. Include the space occupied by the icon-only statistics. */
+html[data-dsh-claude-ui] [data-content-phase='active'] [data-claude-composer-v2]:has(+ [data-composer-dock] [data-composer-stat]) > [data-input-scroll] + div {
+  column-gap: 48px;
+}
+
+html[data-dsh-claude-ui] [data-content-phase='active'] [data-claude-composer-v2]:has(+ [data-composer-dock] [data-composer-stat='activity']):has(+ [data-composer-dock] [data-composer-stat='usage']) > [data-input-scroll] + div {
+  column-gap: 80px;
 }
 
 /* Only the native + trigger leaves the measured tools row. Extension controls,
    permissions and mode chips remain in their normal, wrapping flex flow. */
 html[data-dsh-claude-ui] [data-content-phase='active'] [data-claude-composer-v2] > [data-input-scroll] + div > div:first-child > button[aria-haspopup='listbox'] {
   position: absolute;
-  inset: 15px auto auto 10px;
-  width: 28px;
-  height: 28px;
-  background: transparent;
+  inset: 11px auto auto 12px;
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
+  background: var(--claude-surface-muted);
+  color: var(--claude-secondary);
 }
 
 /* canCompact accepts exactly one direct native primary button. It never drops
    a separate Stop action or changes its owner-supplied disabled/pending state. */
 html[data-dsh-claude-ui] [data-content-phase='active'] [data-claude-composer-v2] > [data-input-scroll] + div > div:last-child > button {
   position: absolute;
-  inset: 14px 12px auto auto;
+  inset: 11px 12px auto auto;
   width: 30px;
   height: 30px;
   transform: none;
-  background: var(--claude-ink, var(--dsw-alias-label-primary));
-  color: var(--claude-canvas, var(--dsw-alias-label-primary-inverted));
+  border-radius: 10px;
+  background: var(--claude-accent);
+  color: var(--claude-on-accent);
+}
+
+html[data-dsh-claude-ui] [data-content-phase='active'] [data-claude-composer-v2] > [data-input-scroll] + div > div:last-child > button:disabled:not([data-sending]) {
+  opacity: 1;
+  background: var(--claude-surface-muted);
+  color: var(--claude-muted);
 }
 
 @media (hover: hover) {
   html[data-dsh-claude-ui] [data-content-phase='active'] [data-claude-composer-v2] > [data-input-scroll] + div > div:last-child > button:hover:not(:disabled) {
-    background: color-mix(in srgb, var(--claude-ink, var(--dsw-alias-label-primary)) 85%, var(--claude-canvas, var(--dsw-alias-bg-base)));
+    background: var(--claude-accent-hover);
+  }
+  html[data-dsh-claude-ui] [data-content-phase='active'] [data-claude-composer-v2] > [data-input-scroll] + div > div:first-child > button[aria-haspopup='listbox']:hover:not(:disabled) {
+    background: var(--claude-selection);
   }
 }

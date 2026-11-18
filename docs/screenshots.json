@@ -1,89 +1,112 @@
 {
-  "version": "0.1.11",
-  "clientSha256": "9dbc84f1de8aa43a187a8287557648533588c66659ba8e096141941a5d9a4f6c",
+  "version": "0.1.24",
+  "clientSha256": "18418e90fd70562dd855b635d3f150c636ce14ea1530739f84ef2a801ca0797f",
   "captures": [
     {
       "file": "01-home.png",
       "description": "创造模式首页，紧凑侧栏与原生输入框",
       "width": 1440,
       "height": 960,
-      "sha256": "1c4b46367f9493c9ff987ab7fcad4ea5988bc3c110b36099bec99f277f95df12"
+      "sha256": "cf4916da17d4c24ffa6d89092497fa0bc1e5531b67091d58094dd6f904c24d2e"
     },
     {
       "file": "02-modes.png",
-      "description": "读取原生预设目录的工作模式菜单",
+      "description": "首页读取原生预设目录的工作模式菜单",
       "width": 1440,
       "height": 960,
-      "sha256": "3b5e445806156ef478fa03718d50dddc34a8e017155632664c62e57c6844c6bd"
+      "sha256": "53eee5efc410966e0011cda629a1aa0b11da3409191d759b20c41948a0688cbf"
     },
     {
       "file": "03-delivery.png",
       "description": "连续回复、交付文件与会话输入区",
       "width": 1440,
       "height": 960,
-      "sha256": "eb2315d97c1cc9e4c5d87972d8a4a9740c66fae8844d51a81ce891fa0ec800e0"
+      "sha256": "129662eaeff92e30ef2bccf31588da8164253b45c4e3dc62dc4cc97e87cc1da6"
     },
     {
       "file": "04-terminal.png",
       "description": "原生命令卡片，分开显示命令、输出、工作目录与退出状态",
       "width": 1440,
       "height": 960,
-      "sha256": "f4d1bc5966ca6b0c52cc18cd4dbcdec8b72861cdcc4eccf3a3c1b87a10e5520d"
+      "sha256": "e9e8af41352e27274fa88ceecd9c340df6c36f028af12a0f41092b15939e5e45"
     },
     {
       "file": "05-context.png",
       "description": "300px 原生详情侧栏与完整上下文分类",
       "width": 1440,
       "height": 960,
-      "sha256": "e669688321013cdd237d44883123fe9b662a998c8c49d92568a4cf7a3e52c406"
+      "sha256": "610445fe94a4646217234ef38064ef3b4489197aa5e1cd3f2b307e8db756833d"
     },
     {
       "file": "06-context-tools.png",
       "description": "可展开的全部工具定义明细；示例数据通过原生投影提供",
       "width": 1440,
       "height": 960,
-      "sha256": "9a5efdf7fc3625419792c91452b61d6074bde5fc6092b77e7ba2bf83f0445bf3"
+      "sha256": "a49da2613de0cad0a9c93ff9e34f056b59a079c36ca86e56a710e450a3a0d29d"
     },
     {
       "file": "07-dark.png",
       "description": "深色主题，包含已选中会话和上下文详情",
       "width": 1440,
       "height": 960,
-      "sha256": "7a0abe9e5c8ddda5a68309f13777fb32f43284e10d23351235a5b58ffba7dd05"
+      "sha256": "4c4e0122ef408083e939eee01f5147c027ab0fe90c5bd1ad9a30cbad54f6202b"
     },
     {
       "file": "08-account.png",
       "description": "macOS 平台条件演示：折叠侧栏后的独立头像与原生账户菜单",
       "width": 1440,
       "height": 960,
-      "sha256": "fb70d5a635084d1a13e3e7d4b95018c000695d4ce5aaf901626dc84f44b73785"
+      "sha256": "de5c08123f0a10f27d28718796b41c260a88c6f30896d31046220c45acf56345"
     },
     {
       "file": "09-approval.png",
       "description": "真实原生等待审批状态；操作仅写入临时演示项目",
       "width": 1440,
       "height": 960,
-      "sha256": "a3ec4696b0c99bf071988795078a762a57f33e661b0b9dea11fae64308bd08bf"
+      "sha256": "d038adf2ab3eccb4ae829481ec1d96ebf7dc4c34f02ef0ee880751f6929621d2"
     },
     {
       "file": "10-running.png",
       "description": "原生命令执行中状态与停止入口；模型响应来自明确的本地回放",
       "width": 1440,
       "height": 960,
-      "sha256": "b7a474e944d64b8719b63b11e7c41d14355c63c873f9b88acb0b5e6a2adab53a"
+      "sha256": "169ca4405b5a0c408bca541832541010725253a77cc4560a3bbc4f316b5d574e"
     },
     {
       "file": "11-command-complete.png",
       "description": "命令完成后原生输出区显示实际 stdout 与完成状态",
       "width": 1440,
       "height": 960,
-      "sha256": "8f2af421fdbb55b2a88b4a84422cf12756e952d333fd79a89c0a55a989ba4802"
+      "sha256": "91630fc2b8d8e6d083a6ed58a10fccd941a6d3e69b1b88ea9bf70e439cf84bbd"
+    },
+    {
+      "file": "12-toolbar-wide.png",
+      "description": "1440px 窗口中的原生输入区：权限、统计、模型和上下文保持同一行",
+      "width": 844,
+      "height": 106,
+      "sha256": "218599591d16c031657301103639a833ae011de2aca5965a6760e2592a918847"
+    },
+    {
+      "file": "13-toolbar-narrow.png",
+      "description": "520px 窗口中的原生输入区：统计以图标展示，模型与上下文保持同一行；macOS 平台标记为演示条件",
+      "width": 520,
+      "height": 106,
+      "sha256": "8422813da80ba9c21535591a159b6ac637ab2cd9dfcac76281e3c45f0b6a8072"
+    },
+    {
+      "file": "14-narrow.png",
+      "description": "520px 窄窗口完整布局；同一原生会话和折叠侧栏",
+      "width": 520,
+      "height": 960,
+      "sha256": "3e5ea5c640fa1ba970525387e6907e789d5eb355fd916591d85ec0ff66591375"
     }
   ],
   "notes": [
-    "Screenshots show the real isolated Web client loaded with the release build. Demo project and text are not private user history.",
-    "Context tool definitions and message categories include explicitly synthetic Host projection fixtures; token values are demo data, not a provider benchmark.",
-    "The account screenshot uses an explicit darwin platform condition in the isolated client and does not claim native Electron acceptance.",
-    "The running screenshot shows native execution state. The standard Bash card displays stdout after the command settles, shown separately in command-complete."
+    "真实隔离 DSH 0.2.2-alpha.2 Web/Loader 加载当前 0.1.24 构建；并非设计稿或静态 HTML 模拟。",
+    "会话来自官方测试快照，项目名、会话文案和工作区为公开演示资料；截图中的旧日期来自回放记录。未读取私人会话、账号或凭据。",
+    "上下文分项由原生估算与明确的示例投影共同演示；MCP/其他工具定义条目为 fixture，不代表真实供应商计费或当前桌面的上下文统计。",
+    "模型响应使用本地 keyless replay；09–11 的审批与命令由原生 DSH 在本次临时示例目录执行，未请求真实模型。运行图展示执行状态，结算后显示实际 stdout。",
+    "08、13、14 显式设置 darwin 平台标记，以展示 macOS 折叠侧栏头像和相同原生布局；这不是正式 Electron 客户端整体验收。",
+    "12、13 是由浏览器按实际输入区边界直接截取的局部图，无图片重绘或产品 DOM 样式替换。14 为相同 520px 窗口全页。"
   ]
 }

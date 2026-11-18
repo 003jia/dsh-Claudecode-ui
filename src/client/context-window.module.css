@@ -1,13 +1,13 @@
 .anchor {
-  position: absolute;
-  inset-inline-end: 0;
-  bottom: 0;
+  position: relative;
+  display: inline-flex;
+  flex: none;
 }
 
 .trigger {
   display: grid;
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   place-items: center;
   padding: 0;
   border: 0;

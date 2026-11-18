@@ -78,7 +78,7 @@ test('attachments, activity, dual primary actions and a narrow card retain nativ
   await f.settle()
   assert.equal(f.card.hasAttribute(marker), false)
   stop.remove()
-  f.setWidth(500)
+  f.setWidth(300)
   await f.settle()
   assert.equal(f.card.hasAttribute(marker), false)
   f.setWidth(700)

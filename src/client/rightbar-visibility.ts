@@ -2,6 +2,7 @@
 import type { Context } from '@deepseek-ai/cordis'
 import type {} from '@deepseek-ai/dsh-client-ui-sidebar-right/client'
 import type { SessionId } from '@deepseek-ai/dsh-session/types'
+import { reportContract } from './diagnostics.ts'
 
 /** The public native operations needed to settle a restored Session surface. */
 interface RightbarEntryFace {
@@ -59,6 +60,7 @@ export function installRightbarVisibility(ctx: Context): void {
         layout?.panels?.setRightbar?.(300)
       } catch (error) {
         if (!(error instanceof TypeError)) throw error
+        reportContract('layout.panels.setRightbar', false, error.message)
       }
       const policy = observeRightbarEntry(scope.sidebarRight)
       // A restored Session may reopen the panel after the entry check, or the
