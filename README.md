@@ -2,17 +2,19 @@
 
 为 **DeepSeek Harness** 提供 Claude Code 桌面端风格的社区界面插件。围绕代码会话、终端执行、审批与交付组织界面，继续使用 DSH 原生模型、权限、工作区和插件能力。
 
-**当前预览版：v0.1.24 · 适配 DSH 0.2.2-alpha.2 · 包名：`dsh-claude-ui`**
+**源码 v0.1.25 · 包名 `dsh-claude-ui`**
 
-[下载与安装](https://github.com/003jia/dsh-Claudecode-ui/releases/tag/v0.1.24) · [更新记录](CHANGELOG.md) · [界面图库](docs/screenshots.md)
+[下载预览版 v0.1.24](https://github.com/003jia/dsh-Claudecode-ui/releases/tag/v0.1.24) · [更新记录](CHANGELOG.md) · [界面图库](docs/screenshots.md)
 
 ![Code 首页与工作区侧栏](docs/images/01-home.png)
 
-> 图片由当前版本在隔离 DSH 环境中实际渲染，使用公开示例会话与演示数据，不包含个人账户、真实工作项目或凭据。详细截图说明见[图库](docs/screenshots.md)。
+> 图片由 v0.1.24 在隔离 DSH 环境中实际渲染，使用公开示例会话与演示数据，不包含个人账户、真实工作项目或凭据。详细截图说明见[图库](docs/screenshots.md)。
 
 ## 这一版更新了什么
 
-这次公开更新合并了 v0.1.12–v0.1.24 的改动：
+v0.1.25 将账户菜单里的“检查更新”接入 DSH 设置中的更新页。未加载该页时，桌面端会尝试打开原生更新窗口。
+
+此前 v0.1.24 的界面调整包括以下几项。
 
 - **输入框与工具栏**：合为一张圆角卡片，加号和发送按钮统一尺寸。权限、扩展和两项统计靠左，模型和上下文圆环靠右。
 - **窄窗口**：根据会话列的实际空间安排单行。统计收成图标，悬停仍可查看轮次、步数、速度、Token 和缓存命中；长模型名放不下时，原生模型按钮可收成图标。

@@ -255,9 +255,16 @@ export function installAccountMenu(ctx: Context): void {
         const releases = row('notes'); releaseLabel = releases.label
         releases.button.addEventListener('click', () => { close(); window.open('https://github.com/deepseek-ai/deepseek-harness/releases', '_blank', 'noopener,noreferrer') })
         const update = row('refresh'); updateLabel = update.label
-        update.button.disabled = updates === undefined
-        if (updates === undefined) { const detail = node('span', css.detail); detail.dataset.desktopOnly = ''; update.button.append(detail) }
-        update.button.addEventListener('click', () => { if (updates === undefined) return; failure = false; void updates.open().catch(() => { failure = true; if (alive) sync() }) })
+        // The official DSH update section owns the release check and its content analysis;
+        // the native bridge remains a fallback for builds that ship the packaged updater.
+        const updateSection = (): boolean => ctx.slots.entries('settings.section').some(entry => entry.options.id === 'update')
+        update.button.disabled = updates === undefined && !updateSection()
+        if (update.button.disabled) { const detail = node('span', css.detail); detail.dataset.desktopOnly = ''; update.button.append(detail) }
+        update.button.addEventListener('click', () => {
+          if (update.button.disabled) return
+          failure = false
+          void openNativeSettingsSection(ctx, 'update').catch(() => updates === undefined ? undefined : updates.open()).catch(() => { failure = true; if (alive) sync() })
+        })
         notice = node('p', css.notice); notice.setAttribute('role', 'status')
         const finalSeparator = node('div', css.separator); finalSeparator.setAttribute('role', 'separator')
         controls.append(languageButton, languageChoices, themeRow, separator, releases.button, update.button, notice, finalSeparator)
